@@ -1,0 +1,49 @@
+import 'package:flutter/material.dart';
+
+class SubmitPage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => SubmitPageState();
+}
+
+class SubmitPageState extends State<SubmitPage> {
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+       backgroundColor: Color.fromRGBO(255, 255, 255, 1),
+       body: Container(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Container(
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        margin: const EdgeInsets.fromLTRB(43, 0, 43, 0),
+                        child: Icon(
+                          Icons.done_rounded,
+                          size: 100,
+                          )
+                      ),
+                      Container(
+                        margin: const EdgeInsets.fromLTRB(43, 24, 43, 0),
+                        child: Text(
+                          "Attendance Submitted",
+                          style: TextStyle(
+                            fontFamily: "Poppins",
+                            fontSize: 30,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+    );
+  }
+}

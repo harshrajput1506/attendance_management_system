@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'semesterpage.dart';
+
 class LoginScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _LoginScreenState();
@@ -16,6 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
     passwordController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,6 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           )),
       body: Container(
+          key: _formkey,
           height: MediaQuery.of(context).size.height,
           width: double.infinity,
           child: Column(
@@ -98,18 +102,30 @@ class _LoginScreenState extends State<LoginScreen> {
                                   color: Color.fromRGBO(255, 255, 255, 1),
                                 ),
                                 alignment: Alignment.center,
-                                child: TextField(
-                                  cursorColor: Colors.black,
-                                  decoration: InputDecoration(
-                                    icon: Icon(
-                                      Icons.email,
+                                child: TextFormField(
+                                    cursorColor: Colors.black,
+                                    decoration: InputDecoration(
+                                      icon: Icon(
+                                        Icons.email,
+                                      ),
+                                      hintText: "Enter Email",
+                                      enabledBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
                                     ),
-                                    hintText: "Enter Email",
-                                    enabledBorder: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
-                                  ),
-                                  controller: emailController,
-                                ),
+                                    controller: emailController,
+                                    validator: (String? value) {
+                                      if (value!.isEmpty) {
+                                        return "Please Enter email";
+                                      }
+
+                                      if (!RegExp(
+                                              "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
+                                          .hasMatch(value)) {
+                                        return "Please enter valid email";
+                                      }
+
+                                      return null;
+                                    }),
                               ),
                               // container 2
                               Container(
@@ -121,19 +137,25 @@ class _LoginScreenState extends State<LoginScreen> {
                                   color: Color.fromRGBO(255, 255, 255, 1),
                                 ),
                                 alignment: Alignment.center,
-                                child: TextField(
-                                  obscureText: true,
-                                  cursorColor: Colors.black,
-                                  decoration: InputDecoration(
-                                    icon: Icon(
-                                      Icons.vpn_key,
+                                child: TextFormField(
+                                    keyboardType: TextInputType.emailAddress,
+                                    obscureText: true,
+                                    cursorColor: Colors.black,
+                                    decoration: InputDecoration(
+                                      icon: Icon(
+                                        Icons.vpn_key,
+                                      ),
+                                      hintText: "Enter Password",
+                                      enabledBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
                                     ),
-                                    hintText: "Enter Password",
-                                    enabledBorder: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
-                                  ),
-                                  controller: passwordController,
-                                ),
+                                    controller: passwordController,
+                                    validator: (String? value) {
+                                      if (value!.isEmpty) {
+                                        return "Please Enter password";
+                                      }
+                                      return null;
+                                    }),
                               ),
                               Container(
                                 margin: EdgeInsets.only(
@@ -152,7 +174,19 @@ class _LoginScreenState extends State<LoginScreen> {
                                             fontSize: 22,
                                             fontFamily: "Poppins",
                                             fontWeight: FontWeight.w600)),
-                                    onPressed: () {}),
+                                    onPressed: () {
+                                      if (_formkey.currentState != null) {
+                                        _formkey.currentState?.validate();
+                                        print("Successfully logged in");
+                                      } else {
+                                        print("Unsuccessful login");
+                                      }
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SemesterPage()));
+                                    }),
                               ),
                             ],
                           ),

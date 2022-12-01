@@ -1,3 +1,4 @@
+import 'package:attendance_management_system/semesterpage.dart';
 import 'package:flutter/material.dart';
 
 import 'loginpage.dart';
@@ -27,7 +28,7 @@ class InitState extends State<GetStartedPage> {
                     "assets/images/img_ggsipulogo1.png",
                     height: 132.00,
                     width: 150.00,
-                  ), 
+                  ),
                 ),
               ),
               Container(
@@ -64,21 +65,18 @@ class InitState extends State<GetStartedPage> {
                       minimumSize: Size(327, 69),
                       backgroundColor: Color.fromRGBO(0, 70, 121, 1),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50)
-                      ),
+                          borderRadius: BorderRadius.circular(50)),
                     ),
                     child: Text("Get Started",
                         style: TextStyle(
                             fontSize: 22,
                             fontFamily: "Poppins",
                             fontWeight: FontWeight.w600)),
-                            
                     onPressed: () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => LoginScreen()));
-                     
                     }),
               ),
             ],
