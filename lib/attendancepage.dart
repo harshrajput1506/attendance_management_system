@@ -1,5 +1,7 @@
+import 'package:attendance_management_system/attendanceModel.dart';
 import 'package:flutter/material.dart';
-import 'package:lite_rolling_switch/lite_rolling_switch.dart';
+import 'package:slide_to_act/slide_to_act.dart';
+
 
 import 'lastpage.dart';
 
@@ -9,36 +11,23 @@ class AttendancePage extends StatefulWidget {
 }
 
 class AttendancePageState extends State<AttendancePage> {
-  final List students = [
-    "Ayush",
-    "Shubh",
-    "Priyanshu",
-    "Ayush",
-    "Shubh",
-    "Priyanshu",
-    "Ayush",
-    "Shubh",
-    "Priyanshu",
-    "Ayush",
-    "Shubh",
-    "Priyanshu",
-    "Ayush",
-    "Shubh",
-    "Priyanshu",
-    "Ayush",
-    "Shubh",
-    "Priyanshu",
-    "Ayush",
-    "Shubh",
-    "Priyanshu",
-    "Ayush",
-    "Shubh",
-    "Priyanshu",
-    "Ayush",
-    "Shubh",
-    "Priyanshu",
+  List<AttendanceModel> students = [
+    AttendanceModel("Shubh", "03519011721", false),
+    AttendanceModel("Ayush", "09919011721", false),
+    AttendanceModel("Priyanshu", "13919011721", false),
+    AttendanceModel("Harsh", "20219011721", false),
+    AttendanceModel("Lakshay", "03719011721", false),
+    AttendanceModel("Sarthak", "05517011721", false),
+    AttendanceModel("Chaitanya", "10519011721", false),
+    AttendanceModel("Parth", "00519011721", false),
+    AttendanceModel("Fraz", "07519011721", false),
+    AttendanceModel("Babbar", "07519011721", false),
+    AttendanceModel("Nishant", "09519011721", false),
+    AttendanceModel("Yash", "08519011721", false),
+    AttendanceModel("Sahil", "04519011721", false),
   ];
-  bool isSwitched = false;
+
+  List<AttendanceModel> selectionStudents = [];
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +37,7 @@ class AttendancePageState extends State<AttendancePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Container(
+            SizedBox(
               height: 150,
               child: Center(
                 child: Text(
@@ -67,65 +56,88 @@ class AttendancePageState extends State<AttendancePage> {
                     shrinkWrap: true,
                     itemCount: students.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return Card(
-                        child: ListTile(
-                          leading: Icon(Icons.person),
-                          title: Text(students[index]),
-                          trailing: Container(
-                            height: 50,
-                            width: 80,
-                            child: Center(
-                              child: LiteRollingSwitch(
-                                value: isSwitched,
-                                textOn: "P",
-                                textOff: "A",
-                                colorOn: Colors.greenAccent,
-                                colorOff: Colors.redAccent,
-                                iconOn: Icons.done,
-                                iconOff: Icons.alarm_off,
-                                textSize: 15,
-                                onTap: () {},
-                                onDoubleTap: () {},
-                                onSwipe: () {},
-                                onChanged: (value) {
-                                  print("the button is $value");
-                                  setState(() {
-                                    isSwitched = !isSwitched;
-                                  });
-                                },
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
+                      return StudentItem(
+                          students[index].name,
+                          students[index].enrollmentNo,
+                          students[index].isSelected,
+                          index);
                     }),
               ),
             ),
             Padding(padding: EdgeInsets.all(15)),
-            Container(
+            SizedBox(
               height: 50,
               width: 320,
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: Size(320, 50),
-                    backgroundColor: Color.fromRGBO(0, 70, 121, 1),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50)),
-                  ),
-                  child: Text("Submit",
-                      style: TextStyle(
-                          fontSize: 22,
-                          fontFamily: "Poppins",
-                          fontWeight: FontWeight.w600)),
-                  onPressed: () {
-                    Navigator.push(context,
+              // child: ElevatedButton(
+              //     style: ElevatedButton.styleFrom(
+              //       minimumSize: Size(320, 50),
+              //       backgroundColor: Color.fromRGBO(0, 70, 121, 1),
+              //       shape: RoundedRectangleBorder(
+              //           borderRadius: BorderRadius.circular(50)),
+              //     ),
+              //     child: Text("Submit",
+              //         style: TextStyle(
+              //             fontSize: 22,
+              //             fontFamily: "Poppins",
+              //             fontWeight: FontWeight.w600)),
+              //     onPressed: () {
+              //       Navigator.push(context,
+              //           MaterialPageRoute(builder: (context) => SubmitPage()));
+              //     }),
+              child: SlideAction(
+                outerColor: Color.fromRGBO(0, 70, 121, 1),
+                innerColor: Colors.white,
+                child: Text("Submit",
+                       style: TextStyle(
+                           fontSize: 22,
+                           fontFamily: "Poppins",
+                           fontWeight: FontWeight.w600,
+                           color: Colors.white,
+                           )),
+                onSubmit: () {
+                  Navigator.push(context,
                         MaterialPageRoute(builder: (context) => SubmitPage()));
-                  }),
+                }
+              ),
             ),
             Padding(padding: EdgeInsets.all(15)),
           ],
         ),
       ),
+    );
+  }
+
+  Widget StudentItem(
+      String name, String enrollmentNo, bool isSelected, int index) {
+    return ListTile(
+      leading: CircleAvatar(
+        backgroundColor: Color.fromRGBO(4, 29, 83, 1),
+        child: Icon(
+          Icons.person_outline_outlined,
+          color: Colors.white,
+        ),
+      ),
+      title: Text(
+        name,
+        style: TextStyle(fontWeight: FontWeight.w600),
+      ),
+      subtitle: Text(enrollmentNo),
+      trailing: isSelected
+          ? Icon(
+              Icons.check_circle,
+              color: Color.fromRGBO(4, 29, 83, 1),
+            )
+          : Icon(Icons.check_circle_outline_outlined, color: Colors.grey),
+      onTap: () {
+        setState(() {
+          students[index].isSelected = !students[index].isSelected;
+          if (students[index].isSelected == true) {
+            selectionStudents.add(AttendanceModel(name, enrollmentNo, true));
+          }else if (students[index].isSelected == false) {
+            selectionStudents.removeWhere((element) => element.name == students[index].name);
+          }
+        });
+      },
     );
   }
 }

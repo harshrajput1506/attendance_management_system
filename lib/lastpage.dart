@@ -21,10 +21,13 @@ class SubmitPageState extends State<SubmitPage> {
                     children: <Widget>[
                       Container(
                         margin: const EdgeInsets.fromLTRB(43, 0, 43, 0),
-                        child: Icon(
+                        child: CircleAvatar(
+                          backgroundColor: Color.fromRGBO(0,70,121, 1),
+                          child: Icon(
                           Icons.done_rounded,
-                          size: 100,
+                          size: 20,
                           )
+                        ),
                       ),
                       Container(
                         margin: const EdgeInsets.fromLTRB(43, 24, 43, 0),

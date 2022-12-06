@@ -8,7 +8,11 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  String value = " ";
+  final List<String> _subjects = [
+    'Computer Networks',
+    'AI & its applications',
+  ];
+  String _dropDownValue = 'AI & its applications';
 
   @override
   Widget build(BuildContext context) {
@@ -67,35 +71,28 @@ class HomePageState extends State<HomePage> {
                             alignment: Alignment.center,
                             child: DropdownButton<String>(
                               underline: SizedBox(),
-                              items: [
-                                DropdownMenuItem<String>(
-                                  value: "Computer Networks",
-                                  child: Center(
-                                    child: Text("Computer Networks"),
-                                  ),
-                                ),
-                                DropdownMenuItem<String>(
-                                  value: "AI & its applications",
-                                  child: Center(
-                                    child: Text("AI & its Applications"),
-                                  ),
-                                ),
-                              ],
-                              onChanged: (_value) => {
-                                print(_value.toString()),
-                                setState(() {
-                                  value = _value!;
-                                }),
-                              },
+                              value: _dropDownValue,
+                              items: _subjects
+                                  .map((item) => DropdownMenuItem<String>(
+                                      value: item,
+                                      child: Text(item,
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            color:Colors.white,                                           
+                                            ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ))
+                                  .toList(),
+                              onChanged: (item) =>
+                                  setState(() => _dropDownValue = item!),
                               hint: Text(
                                 "Select Subject",
                                 style: TextStyle(color: Colors.white),
                                 ),
+                                dropdownColor: Color.fromRGBO(0, 70, 121, 1),
                             ),
                           ),
-                        ),
-                        Text(
-                          "$value",
                         ),
                       ],
                     ),

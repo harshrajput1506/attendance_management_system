@@ -8,7 +8,18 @@ class SemesterPage extends StatefulWidget {
 }
 
 class SemesterPageState extends State<SemesterPage> {
-  String value = " ";
+  //String value = " ";
+  final List<String> _schools = [
+    'USAR',
+    'USDI',
+  ];
+  String _dropDownValueOne = 'USAR';
+  final List<String> _courses = ['AIDS', 'AIML', 'IIOT', 'AR'];
+  String _dropDownValueTwo = 'AIDS';
+  final List<String> _batch = ['B1', 'B2'];
+  String _dropDownValueThree = 'B1';
+  final List<String> _semester = ['1', '2', '3'];
+  String _dropDownValueFour = '1';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,159 +67,235 @@ class SemesterPageState extends State<SemesterPage> {
                   Container(
                     // color: Color.fromRGBO(4, 29, 83, 1),
                     // width: 320,
-                    child: Column(
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.all(10.0),
-                          child: Container(
-                            margin: EdgeInsets.all(10.0),
-                            color: Color.fromRGBO(4, 29, 83, 1),
-                            width: 320,
-                            alignment: Alignment.center,
-                            child: DropdownButton<String>(
-                              underline: SizedBox(),
-                              items: [
-                                DropdownMenuItem<String>(
-                                  value: "usar",
-                                  child: Center(
-                                    child: Text("USAR"),
-                                  ),
+                    child: Center(
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: Container(
+                              margin: EdgeInsets.all(10.0),
+                              color: Color.fromRGBO(4, 29, 83, 1),
+                              width: 320,
+                              alignment: Alignment.center,
+                              child: DropdownButton<String>(
+                                underline: SizedBox(),
+                                value: _dropDownValueOne,
+                                items: _schools
+                                    .map((item) => DropdownMenuItem<String>(
+                                        value: item,
+                                        child: Text(
+                                            item,
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              color:Colors.white,
+                                              ),
+                                              ),
+                                            ))
+                                    .toList(),
+                                onChanged: (item) =>
+                                    setState(() => _dropDownValueOne = item!),
+                                hint: Text(
+                                  "Select School",
+                                  style: TextStyle(color: Colors.white),
                                 ),
-                                DropdownMenuItem<String>(
-                                  value: "usdi",
-                                  child: Center(
-                                    child: Text("USDI"),
-                                  ),
-                                ),
-                              ],
-                              onChanged: (_value) => {
-                                print(_value.toString()),
-                              },
-                              hint: Text(
-                                "Select School",
-                                style: TextStyle(color: Colors.white),
-                                ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(5.0),
-                          child: Container(
-                            margin: EdgeInsets.all(10.0),
-                            color: Color.fromRGBO(4, 29, 83, 1),
-                            width: 320,
-                            alignment: Alignment.center,
-                            child: DropdownButton<String>(
-                              underline: SizedBox(),
-                              items: [
-                                DropdownMenuItem<String>(
-                                  value: "aids",
-                                  child: Center(
-                                    child: Text("AIDS"),
-                                  ),
-                                ),
-                                DropdownMenuItem<String>(
-                                  value: "aiml",
-                                  child: Center(
-                                    child: Text("AIML"),
-                                  ),
-                                ),
-                                DropdownMenuItem<String>(
-                                  value: "iiot",
-                                  child: Center(
-                                    child: Text("IIOT"),
-                                  ),
-                                ),
-                                DropdownMenuItem<String>(
-                                  value: "ar",
-                                  child: Center(
-                                    child: Text("AR"),
-                                  ),
-                                ),
-                              ],
-                              onChanged: (_value) => {
-                                print(_value.toString()),
-                              },
-                              hint: Text(
-                                "Select Course",
-                                style: TextStyle(color: Colors.white),
+                                dropdownColor: Color.fromRGBO(0, 70, 121, 1),
                               ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(5.0),
-                          child: Container(
-                            margin: EdgeInsets.all(10.0),
-                            color: Color.fromRGBO(4, 29, 83, 1),
-                            width: 320,
-                            alignment: Alignment.center,
-                            child: DropdownButton<String>(
-                              underline: SizedBox(),
-                              items: [
-                                DropdownMenuItem<String>(
-                                  value: "b1",
-                                  child: Center(
-                                    child: Text("B1"),
-                                  ),
+                          Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: Container(
+                              margin: EdgeInsets.all(10.0),
+                              color: Color.fromRGBO(4, 29, 83, 1),
+                              width: 320,
+                              alignment: Alignment.center,
+                              child: DropdownButton<String>(
+                                underline: SizedBox(),
+                                value: _dropDownValueTwo,
+                                items: _courses
+                                    .map((item) => DropdownMenuItem<String>(
+                                        value: item,
+                                        child: Text(item,
+                                            style: TextStyle(fontSize: 18,color:Colors.white,))))
+                                    .toList(),
+                                onChanged: (item) =>
+                                    setState(() => _dropDownValueTwo = item!),
+                                hint: Text(
+                                  "Select School",
+                                  style: TextStyle(color: Colors.white),
                                 ),
-                                DropdownMenuItem<String>(
-                                  value: "b2",
-                                  child: Center(
-                                    child: Text("B2"),
-                                  ),
-                                ),
-                              ],
-                              onChanged: (_value) => {
-                                print(_value.toString()),
-                              },
-                              hint: Text(
-                                "Select Batch",
-                                style: TextStyle(color: Colors.white),
-                                ),
+                                dropdownColor: Color.fromRGBO(0, 70, 121, 1),
+                              ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(5.0),
-                          child: Container(
-                            margin: EdgeInsets.all(10.0),
-                            color: Color.fromRGBO(4, 29, 83, 1),
-                            width: 320,
-                            alignment: Alignment.center,
-                            child: DropdownButton<String>(
-                              underline: SizedBox(),
-                              items: [
-                                DropdownMenuItem<String>(
-                                  value: "one",
-                                  child: Center(
-                                    child: Text("1"),
-                                  ),
+                          Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: Container(
+                              margin: EdgeInsets.all(10.0),
+                              color: Color.fromRGBO(4, 29, 83, 1),
+                              width: 320,
+                              alignment: Alignment.center,
+                              child: DropdownButton<String>(
+                                underline: SizedBox(),
+                                value: _dropDownValueThree,
+                                items: _batch
+                                    .map((item) => DropdownMenuItem<String>(
+                                        value: item,
+                                        child: Text(item,
+                                            style: TextStyle(fontSize: 18, color:Colors.white,))))
+                                    .toList(),
+                                onChanged: (item) =>
+                                    setState(() => _dropDownValueThree = item!),
+                                hint: Text(
+                                  "Select School",
+                                  style: TextStyle(color: Colors.white),
                                 ),
-                                DropdownMenuItem<String>(
-                                  value: "two",
-                                  child: Center(
-                                    child: Text("2"),
-                                  ),
-                                ),
-                              ],
-                              onChanged: (_value) => {
-                                print(_value.toString()),
-                                setState(() {
-                                  value = _value!;
-                                }),
-                              },
-                              hint: Text(
-                                "Select Semester",
-                                style: TextStyle(color: Colors.white),
-                                ),
+                                dropdownColor: Color.fromRGBO(0, 70, 121, 1),
+                              ),
                             ),
                           ),
-                        ),
-                        Text(
-                          "$value",
-                        ),
-                      ],
+                          Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: Container(
+                              margin: EdgeInsets.all(10.0),
+                              color: Color.fromRGBO(4, 29, 83, 1),
+                              width: 320,
+                              alignment: Alignment.center,
+                              child: DropdownButton<String>(
+                                underline: SizedBox(),
+                                value: _dropDownValueFour,
+                                items: _semester
+                                    .map((item) => DropdownMenuItem<String>(
+                                        value: item,
+                                        child: Text(item,
+                                            style: TextStyle(fontSize: 18, color:Colors.white,))))
+                                    .toList(),
+                                onChanged: (item) =>
+                                    setState(() => _dropDownValueFour = item!),
+                                hint: Text(
+                                  "Select School",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                dropdownColor: Color.fromRGBO(0, 70, 121, 1),
+                              ),
+                            ),
+                          ),
+                          // Padding(
+                          //   padding: EdgeInsets.all(5.0),
+                          //   child: Container(
+                          //     margin: EdgeInsets.all(10.0),
+                          //     color: Color.fromRGBO(4, 29, 83, 1),
+                          //     width: 320,
+                          //     alignment: Alignment.center,
+                          //     child: DropdownButton<String>(
+                          //       underline: SizedBox(),
+                          //       items: [
+                          //         DropdownMenuItem<String>(
+                          //           value: "aids",
+                          //           child: Center(
+                          //             child: Text("AIDS"),
+                          //           ),
+                          //         ),
+                          //         DropdownMenuItem<String>(
+                          //           value: "aiml",
+                          //           child: Center(
+                          //             child: Text("AIML"),
+                          //           ),
+                          //         ),
+                          //         DropdownMenuItem<String>(
+                          //           value: "iiot",
+                          //           child: Center(
+                          //             child: Text("IIOT"),
+                          //           ),
+                          //         ),
+                          //         DropdownMenuItem<String>(
+                          //           value: "ar",
+                          //           child: Center(
+                          //             child: Text("AR"),
+                          //           ),
+                          //         ),
+                          //       ],
+                          //       onChanged: (_value) => {
+                          //         print(_value.toString()),
+                          //       },
+                          //       hint: Text(
+                          //         "Select Course",
+                          //         style: TextStyle(color: Colors.white),
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                          // Padding(
+                          //   padding: EdgeInsets.all(5.0),
+                          //   child: Container(
+                          //     margin: EdgeInsets.all(10.0),
+                          //     color: Color.fromRGBO(4, 29, 83, 1),
+                          //     width: 320,
+                          //     alignment: Alignment.center,
+                          //     child: DropdownButton<String>(
+                          //       underline: SizedBox(),
+                          //       items: [
+                          //         DropdownMenuItem<String>(
+                          //           value: "b1",
+                          //           child: Center(
+                          //             child: Text("B1"),
+                          //           ),
+                          //         ),
+                          //         DropdownMenuItem<String>(
+                          //           value: "b2",
+                          //           child: Center(
+                          //             child: Text("B2"),
+                          //           ),
+                          //         ),
+                          //       ],
+                          //       onChanged: (_value) => {
+                          //         print(_value.toString()),
+                          //       },
+                          //       hint: Text(
+                          //         "Select Batch",
+                          //         style: TextStyle(color: Colors.white),
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                          // Padding(
+                          //   padding: EdgeInsets.all(5.0),
+                          //   child: Container(
+                          //     margin: EdgeInsets.all(10.0),
+                          //     color: Color.fromRGBO(4, 29, 83, 1),
+                          //     width: 320,
+                          //     alignment: Alignment.center,
+                          //     child: DropdownButton<String>(
+                          //       underline: SizedBox(),
+                          //       items: [
+                          //         DropdownMenuItem<String>(
+                          //           value: "one",
+                          //           child: Center(
+                          //             child: Text("1"),
+                          //           ),
+                          //         ),
+                          //         DropdownMenuItem<String>(
+                          //           value: "two",
+                          //           child: Center(
+                          //             child: Text("2"),
+                          //           ),
+                          //         ),
+                          //       ],
+                          //       onChanged: (_value) => {
+                          //         print(_value.toString()),
+                          //         setState(() {
+                          //           value = _value!;
+                          //         }),
+                          //       },
+                          //       hint: Text(
+                          //         "Select Semester",
+                          //         style: TextStyle(color: Colors.white),
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
