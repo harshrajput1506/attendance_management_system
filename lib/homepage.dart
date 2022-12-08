@@ -12,7 +12,7 @@ class HomePageState extends State<HomePage> {
     'Computer Networks',
     'AI & its applications',
   ];
-  String _dropDownValue = 'AI & its applications';
+  String? _dropDownValue;
 
   @override
   Widget build(BuildContext context) {
@@ -66,30 +66,36 @@ class HomePageState extends State<HomePage> {
                           padding: EdgeInsets.all(5.0),
                           child: Container(
                             margin: EdgeInsets.all(10.0),
-                            color: Color.fromRGBO(4, 29, 83, 1),
+                            decoration:BoxDecoration(borderRadius: BorderRadius.circular(5),color: Color.fromRGBO(4, 29, 83, 1),),
                             width: 320,
                             alignment: Alignment.center,
                             child: DropdownButton<String>(
+                              borderRadius: BorderRadius.circular(5),
+                              isExpanded: true,
                               underline: SizedBox(),
                               value: _dropDownValue,
                               items: _subjects
-                                  .map((item) => DropdownMenuItem<String>(
+                                  .map((item) => DropdownMenuItem<String>(                                   
                                       value: item,
-                                      child: Text(item,
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            color:Colors.white,                                           
-                                            ),
-                                              textAlign: TextAlign.center,
-                                            ),
+                                      child: Center(
+                                        child: Text(item,
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              color:Colors.white,                                           
+                                              ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                      ),
                                           ))
                                   .toList(),
                               onChanged: (item) =>
                                   setState(() => _dropDownValue = item!),
-                              hint: Text(
-                                "Select Subject",
-                                style: TextStyle(color: Colors.white),
-                                ),
+                              hint: Center(
+                                child: Text(
+                                  "Select Subject",
+                                  style: TextStyle(color: Colors.white,fontSize: 18,),
+                                  ),
+                              ),
                                 dropdownColor: Color.fromRGBO(0, 70, 121, 1),
                             ),
                           ),

@@ -26,7 +26,6 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
           elevation: 0,
-          brightness: Brightness.light,
           backgroundColor: Colors.white,
           leading: IconButton(
             onPressed: () {
@@ -41,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Container(
           key: _formkey,
           height: MediaQuery.of(context).size.height,
-          width: double.infinity,
+          width: MediaQuery.of(context).size.width,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
@@ -83,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       alignment: Alignment.bottomCenter,
                       padding: EdgeInsets.all(15),
                       child: SizedBox(
-                        height: 465,
+                        height: 430,
                         width: 364,
                         child: Card(
                           shape: RoundedRectangleBorder(

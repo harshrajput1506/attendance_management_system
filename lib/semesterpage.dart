@@ -13,13 +13,13 @@ class SemesterPageState extends State<SemesterPage> {
     'USAR',
     'USDI',
   ];
-  String _dropDownValueOne = 'USAR';
+  String? _dropDownValueOne;
   final List<String> _courses = ['AIDS', 'AIML', 'IIOT', 'AR'];
-  String _dropDownValueTwo = 'AIDS';
+  String? _dropDownValueTwo;
   final List<String> _batch = ['B1', 'B2'];
-  String _dropDownValueThree = 'B1';
+  String? _dropDownValueThree;
   final List<String> _semester = ['1', '2', '3'];
-  String _dropDownValueFour = '1';
+  String? _dropDownValueFour;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,30 +73,37 @@ class SemesterPageState extends State<SemesterPage> {
                           Padding(
                             padding: EdgeInsets.all(10.0),
                             child: Container(
-                              margin: EdgeInsets.all(10.0),
-                              color: Color.fromRGBO(4, 29, 83, 1),
+                              decoration:BoxDecoration(borderRadius: BorderRadius.circular(5),color: Color.fromRGBO(4, 29, 83, 1),),
+                              margin: EdgeInsets.all(10.0),                              
                               width: 320,
                               alignment: Alignment.center,
                               child: DropdownButton<String>(
-                                underline: SizedBox(),
+                                borderRadius: BorderRadius.circular(5),
+                                isExpanded: true,
+                                iconEnabledColor: Colors.white,
                                 value: _dropDownValueOne,
+                                underline: SizedBox(),
                                 items: _schools
                                     .map((item) => DropdownMenuItem<String>(
                                         value: item,
-                                        child: Text(
-                                            item,
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                              color:Colors.white,
-                                              ),
-                                              ),
+                                        child: Center(
+                                          child: Text(
+                                              item,
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                color:Colors.white,
+                                                ),
+                                          ),
+                                        ),
                                             ))
                                     .toList(),
                                 onChanged: (item) =>
                                     setState(() => _dropDownValueOne = item!),
-                                hint: Text(
-                                  "Select School",
-                                  style: TextStyle(color: Colors.white),
+                                hint: Center(
+                                  child: Text(
+                                    "Select School",
+                                    style: TextStyle(color: Colors.white,fontSize: 18,),
+                                  ),
                                 ),
                                 dropdownColor: Color.fromRGBO(0, 70, 121, 1),
                               ),
@@ -106,23 +113,30 @@ class SemesterPageState extends State<SemesterPage> {
                             padding: EdgeInsets.all(10.0),
                             child: Container(
                               margin: EdgeInsets.all(10.0),
-                              color: Color.fromRGBO(4, 29, 83, 1),
+                              decoration:BoxDecoration(borderRadius: BorderRadius.circular(5),color: Color.fromRGBO(4, 29, 83, 1),),
                               width: 320,
                               alignment: Alignment.center,
                               child: DropdownButton<String>(
+                                borderRadius: BorderRadius.circular(5),
+                                isExpanded: true,
+                                iconEnabledColor: Colors.white,
                                 underline: SizedBox(),
                                 value: _dropDownValueTwo,
                                 items: _courses
                                     .map((item) => DropdownMenuItem<String>(
                                         value: item,
-                                        child: Text(item,
-                                            style: TextStyle(fontSize: 18,color:Colors.white,))))
+                                        child: Center(
+                                          child: Text(item,
+                                              style: TextStyle(fontSize: 18,color:Colors.white,)),
+                                        )))
                                     .toList(),
                                 onChanged: (item) =>
                                     setState(() => _dropDownValueTwo = item!),
-                                hint: Text(
-                                  "Select School",
-                                  style: TextStyle(color: Colors.white),
+                                hint: Center(
+                                  child: Text(
+                                    "Select Branch",
+                                    style: TextStyle(color: Colors.white,fontSize: 18,),
+                                  ),
                                 ),
                                 dropdownColor: Color.fromRGBO(0, 70, 121, 1),
                               ),
@@ -132,23 +146,30 @@ class SemesterPageState extends State<SemesterPage> {
                             padding: EdgeInsets.all(10.0),
                             child: Container(
                               margin: EdgeInsets.all(10.0),
-                              color: Color.fromRGBO(4, 29, 83, 1),
+                              decoration:BoxDecoration(borderRadius: BorderRadius.circular(5),color: Color.fromRGBO(4, 29, 83, 1),),
                               width: 320,
                               alignment: Alignment.center,
                               child: DropdownButton<String>(
+                                borderRadius: BorderRadius.circular(5),
+                                isExpanded: true,
+                                iconEnabledColor: Colors.white,
                                 underline: SizedBox(),
                                 value: _dropDownValueThree,
                                 items: _batch
                                     .map((item) => DropdownMenuItem<String>(
                                         value: item,
-                                        child: Text(item,
-                                            style: TextStyle(fontSize: 18, color:Colors.white,))))
+                                        child: Center(
+                                          child: Text(item,
+                                              style: TextStyle(fontSize: 18, color:Colors.white,)),
+                                        )))
                                     .toList(),
                                 onChanged: (item) =>
                                     setState(() => _dropDownValueThree = item!),
-                                hint: Text(
-                                  "Select School",
-                                  style: TextStyle(color: Colors.white),
+                                hint: Center(
+                                  child: Text(
+                                    "Select Batch",
+                                    style: TextStyle(color: Colors.white,fontSize: 18,),
+                                  ),
                                 ),
                                 dropdownColor: Color.fromRGBO(0, 70, 121, 1),
                               ),
@@ -158,142 +179,35 @@ class SemesterPageState extends State<SemesterPage> {
                             padding: EdgeInsets.all(10.0),
                             child: Container(
                               margin: EdgeInsets.all(10.0),
-                              color: Color.fromRGBO(4, 29, 83, 1),
+                              decoration:BoxDecoration(borderRadius: BorderRadius.circular(5),color: Color.fromRGBO(4, 29, 83, 1),),
                               width: 320,
                               alignment: Alignment.center,
                               child: DropdownButton<String>(
+                                borderRadius: BorderRadius.circular(5),
+                                isExpanded: true,
+                                iconEnabledColor: Colors.white,
                                 underline: SizedBox(),
                                 value: _dropDownValueFour,
                                 items: _semester
                                     .map((item) => DropdownMenuItem<String>(
-                                        value: item,
-                                        child: Text(item,
-                                            style: TextStyle(fontSize: 18, color:Colors.white,))))
+                                        value: item, 
+                                        child: Center(
+                                          child: Text(item,
+                                              style: TextStyle(fontSize: 18, color:Colors.white,)),
+                                        )))
                                     .toList(),
                                 onChanged: (item) =>
                                     setState(() => _dropDownValueFour = item!),
-                                hint: Text(
-                                  "Select School",
-                                  style: TextStyle(color: Colors.white),
+                                hint: Center(
+                                  child: Text(
+                                    "Select Semester",
+                                    style: TextStyle(color: Colors.white,fontSize: 18,),
+                                  ),
                                 ),
                                 dropdownColor: Color.fromRGBO(0, 70, 121, 1),
                               ),
                             ),
                           ),
-                          // Padding(
-                          //   padding: EdgeInsets.all(5.0),
-                          //   child: Container(
-                          //     margin: EdgeInsets.all(10.0),
-                          //     color: Color.fromRGBO(4, 29, 83, 1),
-                          //     width: 320,
-                          //     alignment: Alignment.center,
-                          //     child: DropdownButton<String>(
-                          //       underline: SizedBox(),
-                          //       items: [
-                          //         DropdownMenuItem<String>(
-                          //           value: "aids",
-                          //           child: Center(
-                          //             child: Text("AIDS"),
-                          //           ),
-                          //         ),
-                          //         DropdownMenuItem<String>(
-                          //           value: "aiml",
-                          //           child: Center(
-                          //             child: Text("AIML"),
-                          //           ),
-                          //         ),
-                          //         DropdownMenuItem<String>(
-                          //           value: "iiot",
-                          //           child: Center(
-                          //             child: Text("IIOT"),
-                          //           ),
-                          //         ),
-                          //         DropdownMenuItem<String>(
-                          //           value: "ar",
-                          //           child: Center(
-                          //             child: Text("AR"),
-                          //           ),
-                          //         ),
-                          //       ],
-                          //       onChanged: (_value) => {
-                          //         print(_value.toString()),
-                          //       },
-                          //       hint: Text(
-                          //         "Select Course",
-                          //         style: TextStyle(color: Colors.white),
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
-                          // Padding(
-                          //   padding: EdgeInsets.all(5.0),
-                          //   child: Container(
-                          //     margin: EdgeInsets.all(10.0),
-                          //     color: Color.fromRGBO(4, 29, 83, 1),
-                          //     width: 320,
-                          //     alignment: Alignment.center,
-                          //     child: DropdownButton<String>(
-                          //       underline: SizedBox(),
-                          //       items: [
-                          //         DropdownMenuItem<String>(
-                          //           value: "b1",
-                          //           child: Center(
-                          //             child: Text("B1"),
-                          //           ),
-                          //         ),
-                          //         DropdownMenuItem<String>(
-                          //           value: "b2",
-                          //           child: Center(
-                          //             child: Text("B2"),
-                          //           ),
-                          //         ),
-                          //       ],
-                          //       onChanged: (_value) => {
-                          //         print(_value.toString()),
-                          //       },
-                          //       hint: Text(
-                          //         "Select Batch",
-                          //         style: TextStyle(color: Colors.white),
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
-                          // Padding(
-                          //   padding: EdgeInsets.all(5.0),
-                          //   child: Container(
-                          //     margin: EdgeInsets.all(10.0),
-                          //     color: Color.fromRGBO(4, 29, 83, 1),
-                          //     width: 320,
-                          //     alignment: Alignment.center,
-                          //     child: DropdownButton<String>(
-                          //       underline: SizedBox(),
-                          //       items: [
-                          //         DropdownMenuItem<String>(
-                          //           value: "one",
-                          //           child: Center(
-                          //             child: Text("1"),
-                          //           ),
-                          //         ),
-                          //         DropdownMenuItem<String>(
-                          //           value: "two",
-                          //           child: Center(
-                          //             child: Text("2"),
-                          //           ),
-                          //         ),
-                          //       ],
-                          //       onChanged: (_value) => {
-                          //         print(_value.toString()),
-                          //         setState(() {
-                          //           value = _value!;
-                          //         }),
-                          //       },
-                          //       hint: Text(
-                          //         "Select Semester",
-                          //         style: TextStyle(color: Colors.white),
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
                         ],
                       ),
                     ),
