@@ -8,18 +8,30 @@ class SemesterPage extends StatefulWidget {
 }
 
 class SemesterPageState extends State<SemesterPage> {
-  //String value = " ";
   final List<String> _schools = [
     'USAR',
     'USDI',
   ];
-  String? _dropDownValueOne;
-  final List<String> _courses = ['AIDS', 'AIML', 'IIOT', 'AR'];
-  String? _dropDownValueTwo;
+  final List<String> _usarCourses = [
+    'AIDS',
+    'AIML',
+    'IIOT',
+    'AR',
+  ];
+  final List<String> _usdiCourses = [
+    'Industrial Design',
+    'Interaction Design',
+    'Interior Design'
+  ];
+  String? _selectedSchool;
+  String? _selectedBranch;
   final List<String> _batch = ['B1', 'B2'];
-  String? _dropDownValueThree;
+  String? _selectedBatch;
   final List<String> _semester = ['1', '2', '3'];
-  String? _dropDownValueFour;
+  String? _selectedSemester;
+
+  List<String> branches = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,44 +77,47 @@ class SemesterPageState extends State<SemesterPage> {
                     ),
                   ),
                   Container(
-                    // color: Color.fromRGBO(4, 29, 83, 1),
-                    // width: 320,
                     child: Center(
                       child: Column(
                         children: <Widget>[
                           Padding(
                             padding: EdgeInsets.all(10.0),
                             child: Container(
-                              decoration:BoxDecoration(borderRadius: BorderRadius.circular(5),color: Color.fromRGBO(4, 29, 83, 1),),
-                              margin: EdgeInsets.all(10.0),                              
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Color.fromRGBO(4, 29, 83, 1),
+                              ),
+                              margin: EdgeInsets.all(10.0),
                               width: 320,
                               alignment: Alignment.center,
                               child: DropdownButton<String>(
                                 borderRadius: BorderRadius.circular(5),
                                 isExpanded: true,
                                 iconEnabledColor: Colors.white,
-                                value: _dropDownValueOne,
+                                value: _selectedSchool,
                                 underline: SizedBox(),
                                 items: _schools
                                     .map((item) => DropdownMenuItem<String>(
-                                        value: item,
-                                        child: Center(
-                                          child: Text(
+                                          value: item,
+                                          child: Center(
+                                            child: Text(
                                               item,
                                               style: TextStyle(
                                                 fontSize: 18,
-                                                color:Colors.white,
-                                                ),
+                                                color: Colors.white,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                            ))
+                                        ))
                                     .toList(),
-                                onChanged: (item) =>
-                                    setState(() => _dropDownValueOne = item!),
+                                onChanged: onChangedCallback,
                                 hint: Center(
                                   child: Text(
                                     "Select School",
-                                    style: TextStyle(color: Colors.white,fontSize: 18,),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                    ),
                                   ),
                                 ),
                                 dropdownColor: Color.fromRGBO(0, 70, 121, 1),
@@ -113,7 +128,10 @@ class SemesterPageState extends State<SemesterPage> {
                             padding: EdgeInsets.all(10.0),
                             child: Container(
                               margin: EdgeInsets.all(10.0),
-                              decoration:BoxDecoration(borderRadius: BorderRadius.circular(5),color: Color.fromRGBO(4, 29, 83, 1),),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Color.fromRGBO(4, 29, 83, 1),
+                              ),
                               width: 320,
                               alignment: Alignment.center,
                               child: DropdownButton<String>(
@@ -121,21 +139,27 @@ class SemesterPageState extends State<SemesterPage> {
                                 isExpanded: true,
                                 iconEnabledColor: Colors.white,
                                 underline: SizedBox(),
-                                value: _dropDownValueTwo,
-                                items: _courses
+                                value: _selectedBranch,
+                                items: branches
                                     .map((item) => DropdownMenuItem<String>(
                                         value: item,
                                         child: Center(
                                           child: Text(item,
-                                              style: TextStyle(fontSize: 18,color:Colors.white,)),
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.white,
+                                              )),
                                         )))
                                     .toList(),
-                                onChanged: (item) =>
-                                    setState(() => _dropDownValueTwo = item!),
+                                onChanged: (branch) =>
+                                    setState(() => _selectedBranch = branch!),
                                 hint: Center(
                                   child: Text(
                                     "Select Branch",
-                                    style: TextStyle(color: Colors.white,fontSize: 18,),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                    ),
                                   ),
                                 ),
                                 dropdownColor: Color.fromRGBO(0, 70, 121, 1),
@@ -146,7 +170,10 @@ class SemesterPageState extends State<SemesterPage> {
                             padding: EdgeInsets.all(10.0),
                             child: Container(
                               margin: EdgeInsets.all(10.0),
-                              decoration:BoxDecoration(borderRadius: BorderRadius.circular(5),color: Color.fromRGBO(4, 29, 83, 1),),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Color.fromRGBO(4, 29, 83, 1),
+                              ),
                               width: 320,
                               alignment: Alignment.center,
                               child: DropdownButton<String>(
@@ -154,21 +181,27 @@ class SemesterPageState extends State<SemesterPage> {
                                 isExpanded: true,
                                 iconEnabledColor: Colors.white,
                                 underline: SizedBox(),
-                                value: _dropDownValueThree,
+                                value: _selectedBatch,
                                 items: _batch
                                     .map((item) => DropdownMenuItem<String>(
                                         value: item,
                                         child: Center(
                                           child: Text(item,
-                                              style: TextStyle(fontSize: 18, color:Colors.white,)),
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.white,
+                                              )),
                                         )))
                                     .toList(),
                                 onChanged: (item) =>
-                                    setState(() => _dropDownValueThree = item!),
+                                    setState(() => _selectedBatch = item!),
                                 hint: Center(
                                   child: Text(
                                     "Select Batch",
-                                    style: TextStyle(color: Colors.white,fontSize: 18,),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                    ),
                                   ),
                                 ),
                                 dropdownColor: Color.fromRGBO(0, 70, 121, 1),
@@ -179,7 +212,10 @@ class SemesterPageState extends State<SemesterPage> {
                             padding: EdgeInsets.all(10.0),
                             child: Container(
                               margin: EdgeInsets.all(10.0),
-                              decoration:BoxDecoration(borderRadius: BorderRadius.circular(5),color: Color.fromRGBO(4, 29, 83, 1),),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Color.fromRGBO(4, 29, 83, 1),
+                              ),
                               width: 320,
                               alignment: Alignment.center,
                               child: DropdownButton<String>(
@@ -187,21 +223,27 @@ class SemesterPageState extends State<SemesterPage> {
                                 isExpanded: true,
                                 iconEnabledColor: Colors.white,
                                 underline: SizedBox(),
-                                value: _dropDownValueFour,
+                                value: _selectedSemester,
                                 items: _semester
                                     .map((item) => DropdownMenuItem<String>(
-                                        value: item, 
+                                        value: item,
                                         child: Center(
                                           child: Text(item,
-                                              style: TextStyle(fontSize: 18, color:Colors.white,)),
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.white,
+                                              )),
                                         )))
                                     .toList(),
                                 onChanged: (item) =>
-                                    setState(() => _dropDownValueFour = item!),
+                                    setState(() => _selectedSemester = item!),
                                 hint: Center(
                                   child: Text(
                                     "Select Semester",
-                                    style: TextStyle(color: Colors.white,fontSize: 18,),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                    ),
                                   ),
                                 ),
                                 dropdownColor: Color.fromRGBO(0, 70, 121, 1),
@@ -237,5 +279,21 @@ class SemesterPageState extends State<SemesterPage> {
         ),
       ),
     );
+  }
+
+  void onChangedCallback(school) {
+    if (school == 'USAR') {
+      branches = _usarCourses;
+    } else if (school == 'USDI') {
+      branches = _usdiCourses;
+    } else {
+      branches = [];
+    }
+    setState(() {
+      _selectedBranch = null;
+      _selectedBatch = null;
+      _selectedSemester = null;
+      _selectedSchool = school;
+    });
   }
 }
