@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'semesterpage.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -91,7 +90,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           color: Color.fromRGBO(4, 29, 83, 1),
                           child: Column(
                             children: <Widget>[
-                              // container 1
                               Container(
                                 margin: EdgeInsets.only(
                                     left: 20, right: 20, top: 100),
@@ -122,11 +120,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                           .hasMatch(value)) {
                                         return "Please enter valid email";
                                       }
-
                                       return null;
                                     }),
                               ),
-                              // container 2
                               Container(
                                 margin: EdgeInsets.only(
                                     left: 20, right: 20, top: 30),
