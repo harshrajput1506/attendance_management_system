@@ -2,7 +2,6 @@ import 'package:attendance_management_system/attendanceModel.dart';
 import 'package:flutter/material.dart';
 import 'package:slide_to_act/slide_to_act.dart';
 
-
 import 'lastpage.dart';
 
 class AttendancePage extends StatefulWidget {
@@ -38,7 +37,7 @@ class AttendancePageState extends State<AttendancePage> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             SizedBox(
-              height: 150,
+              height: 120,
               child: Center(
                 child: Text(
                   "Computer Networks",
@@ -85,20 +84,19 @@ class AttendancePageState extends State<AttendancePage> {
               //           MaterialPageRoute(builder: (context) => SubmitPage()));
               //     }),
               child: SlideAction(
-                outerColor: Color.fromRGBO(0, 70, 121, 1),
-                innerColor: Colors.white,
-                child: Text("Submit",
-                       style: TextStyle(
-                           fontSize: 22,
-                           fontFamily: "Poppins",
-                           fontWeight: FontWeight.w600,
-                           color: Colors.white,
-                           )),
-                onSubmit: () {
-                  Navigator.push(context,
+                  outerColor: Color.fromRGBO(0, 70, 121, 1),
+                  innerColor: Colors.white,
+                  child: Text("Submit",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontFamily: "Poppins",
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      )),
+                  onSubmit: () {
+                    Navigator.push(context,
                         MaterialPageRoute(builder: (context) => SubmitPage()));
-                }
-              ),
+                  }),
             ),
             Padding(padding: EdgeInsets.all(15)),
           ],
@@ -133,8 +131,9 @@ class AttendancePageState extends State<AttendancePage> {
           students[index].isSelected = !students[index].isSelected;
           if (students[index].isSelected == true) {
             selectionStudents.add(AttendanceModel(name, enrollmentNo, true));
-          }else if (students[index].isSelected == false) {
-            selectionStudents.removeWhere((element) => element.name == students[index].name);
+          } else if (students[index].isSelected == false) {
+            selectionStudents
+                .removeWhere((element) => element.name == students[index].name);
           }
         });
       },

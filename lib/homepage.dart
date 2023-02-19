@@ -23,7 +23,7 @@ class HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             Container(
-              height: 50,
+              height: 2,
               child: Center(
                 child: Icon(
                   Icons.person_rounded,
@@ -32,11 +32,11 @@ class HomePageState extends State<HomePage> {
               ),
             ),
             Container(
-              alignment: Alignment.topCenter,
+              // alignment: Alignment.center,
               child: Column(
                 children: <Widget>[
                   Container(
-                    margin: const EdgeInsets.fromLTRB(43, 0, 43, 0),
+                    // margin: const EdgeInsets.fromLTRB(43, 0, 43, 0),
                     child: Text(
                       "Rahul Johari",
                       style: TextStyle(
@@ -66,7 +66,10 @@ class HomePageState extends State<HomePage> {
                           padding: EdgeInsets.all(5.0),
                           child: Container(
                             margin: EdgeInsets.all(10.0),
-                            decoration:BoxDecoration(borderRadius: BorderRadius.circular(5),color: Color.fromRGBO(4, 29, 83, 1),),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Color.fromRGBO(4, 29, 83, 1),
+                            ),
                             width: 320,
                             alignment: Alignment.center,
                             child: DropdownButton<String>(
@@ -75,28 +78,32 @@ class HomePageState extends State<HomePage> {
                               underline: SizedBox(),
                               value: _dropDownValue,
                               items: _subjects
-                                  .map((item) => DropdownMenuItem<String>(                                   
-                                      value: item,
-                                      child: Center(
-                                        child: Text(item,
+                                  .map((item) => DropdownMenuItem<String>(
+                                        value: item,
+                                        child: Center(
+                                          child: Text(
+                                            item,
                                             style: TextStyle(
                                               fontSize: 18,
-                                              color:Colors.white,                                           
-                                              ),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                      ),
-                                          ))
+                                              color: Colors.white,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ))
                                   .toList(),
                               onChanged: (item) =>
                                   setState(() => _dropDownValue = item!),
                               hint: Center(
                                 child: Text(
                                   "Select Subject",
-                                  style: TextStyle(color: Colors.white,fontSize: 18,),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
                                   ),
+                                ),
                               ),
-                                dropdownColor: Color.fromRGBO(0, 70, 121, 1),
+                              dropdownColor: Color.fromRGBO(0, 70, 121, 1),
                             ),
                           ),
                         ),

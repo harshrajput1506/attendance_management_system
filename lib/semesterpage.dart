@@ -41,7 +41,7 @@ class SemesterPageState extends State<SemesterPage> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             Container(
-              height: 50,
+              height: 10,
               child: Center(
                 child: Icon(
                   Icons.person_rounded,
@@ -76,15 +76,18 @@ class SemesterPageState extends State<SemesterPage> {
                       textAlign: TextAlign.start,
                     ),
                   ),
+                  SizedBox(
+                    height: 30.0,
+                  ),
                   Container(
                     child: Center(
                       child: Column(
                         children: <Widget>[
                           Padding(
-                            padding: EdgeInsets.all(10.0),
+                            padding: EdgeInsets.all(2.0),
                             child: Container(
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
+                                borderRadius: BorderRadius.circular(10),
                                 color: Color.fromRGBO(4, 29, 83, 1),
                               ),
                               margin: EdgeInsets.all(10.0),
@@ -125,11 +128,11 @@ class SemesterPageState extends State<SemesterPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.all(10.0),
+                            padding: EdgeInsets.all(2.0),
                             child: Container(
                               margin: EdgeInsets.all(10.0),
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
+                                borderRadius: BorderRadius.circular(10),
                                 color: Color.fromRGBO(4, 29, 83, 1),
                               ),
                               width: 320,
@@ -167,17 +170,17 @@ class SemesterPageState extends State<SemesterPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.all(10.0),
+                            padding: EdgeInsets.all(2.0),
                             child: Container(
                               margin: EdgeInsets.all(10.0),
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
+                                borderRadius: BorderRadius.circular(10),
                                 color: Color.fromRGBO(4, 29, 83, 1),
                               ),
                               width: 320,
                               alignment: Alignment.center,
                               child: DropdownButton<String>(
-                                borderRadius: BorderRadius.circular(5),
+                                borderRadius: BorderRadius.circular(10),
                                 isExpanded: true,
                                 iconEnabledColor: Colors.white,
                                 underline: SizedBox(),
@@ -209,11 +212,11 @@ class SemesterPageState extends State<SemesterPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.all(10.0),
+                            padding: EdgeInsets.all(2.0),
                             child: Container(
                               margin: EdgeInsets.all(10.0),
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
+                                borderRadius: BorderRadius.circular(10),
                                 color: Color.fromRGBO(4, 29, 83, 1),
                               ),
                               width: 320,
