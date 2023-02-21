@@ -33,6 +33,8 @@ dependencies:
     sdk: flutter
   http: ^0.13.5
   
+  
+  
   slide_to_act: ^2.0.1
 
 
