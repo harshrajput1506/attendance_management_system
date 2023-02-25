@@ -33,73 +33,76 @@ class AttendancePageState extends State<AttendancePage> {
     return Scaffold(
       backgroundColor: Color.fromRGBO(255, 255, 255, 1),
       body: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            SizedBox(
-              height: 120,
-              child: Center(
-                child: Text(
-                  "Computer Networks",
-                  style: TextStyle(
-                      fontSize: 27,
-                      fontFamily: "Poppins",
-                      fontWeight: FontWeight.w600),
-                  textAlign: TextAlign.center,
+        child: Padding(
+          padding: const EdgeInsets.only(top: 50,bottom:0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              SizedBox(
+                height: 100,
+                child: Center(
+                  child: Text(
+                    "Computer Networks",
+                    style: TextStyle(
+                        fontSize: 27,
+                        fontFamily: "Poppins",
+                        fontWeight: FontWeight.w600),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
-            ),
-            Container(
-              child: Expanded(
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: students.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return StudentItem(
-                          students[index].name,
-                          students[index].enrollmentNo,
-                          students[index].isSelected,
-                          index);
+              Container(
+                child: Expanded(
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: students.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return StudentItem(
+                            students[index].name,
+                            students[index].enrollmentNo,
+                            students[index].isSelected,
+                            index);
+                      }),
+                ),
+              ),
+              Padding(padding: EdgeInsets.all(15)),
+              SizedBox(
+                height: 50,
+                width: 320,
+                // child: ElevatedButton(
+                //     style: ElevatedButton.styleFrom(
+                //       minimumSize: Size(320, 50),
+                //       backgroundColor: Color.fromRGBO(0, 70, 121, 1),
+                //       shape: RoundedRectangleBorder(
+                //           borderRadius: BorderRadius.circular(50)),
+                //     ),
+                //     child: Text("Submit",
+                //         style: TextStyle(
+                //             fontSize: 22,
+                //             fontFamily: "Poppins",
+                //             fontWeight: FontWeight.w600)),
+                //     onPressed: () {
+                //       Navigator.push(context,
+                //           MaterialPageRoute(builder: (context) => SubmitPage()));
+                //     }),
+                child: SlideAction(
+                    outerColor: Color.fromRGBO(0, 70, 121, 1),
+                    innerColor: Colors.white,
+                    child: Text("Submit",
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontFamily: "Poppins",
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        )),
+                    onSubmit: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => SubmitPage()));
                     }),
               ),
-            ),
-            Padding(padding: EdgeInsets.all(15)),
-            SizedBox(
-              height: 50,
-              width: 320,
-              // child: ElevatedButton(
-              //     style: ElevatedButton.styleFrom(
-              //       minimumSize: Size(320, 50),
-              //       backgroundColor: Color.fromRGBO(0, 70, 121, 1),
-              //       shape: RoundedRectangleBorder(
-              //           borderRadius: BorderRadius.circular(50)),
-              //     ),
-              //     child: Text("Submit",
-              //         style: TextStyle(
-              //             fontSize: 22,
-              //             fontFamily: "Poppins",
-              //             fontWeight: FontWeight.w600)),
-              //     onPressed: () {
-              //       Navigator.push(context,
-              //           MaterialPageRoute(builder: (context) => SubmitPage()));
-              //     }),
-              child: SlideAction(
-                  outerColor: Color.fromRGBO(0, 70, 121, 1),
-                  innerColor: Colors.white,
-                  child: Text("Submit",
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontFamily: "Poppins",
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      )),
-                  onSubmit: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => SubmitPage()));
-                  }),
-            ),
-            Padding(padding: EdgeInsets.all(15)),
-          ],
+              Padding(padding: EdgeInsets.all(15)),
+            ],
+          ),
         ),
       ),
     );

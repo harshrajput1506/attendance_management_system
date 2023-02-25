@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'homepage.dart';
+import 'attendancepage.dart';
 
 class SemesterPage extends StatefulWidget {
   @override
@@ -23,6 +23,12 @@ class SemesterPageState extends State<SemesterPage> {
     'Interaction Design',
     'Interior Design'
   ];
+
+  final List<String> _subjects = [
+    'Computer Networks',
+    'AI & its applications',
+  ];
+  String? _dropDownValue;
   String? _selectedSchool;
   String? _selectedBranch;
   final List<String> _batch = ['B1', 'B2'];
@@ -36,6 +42,37 @@ class SemesterPageState extends State<SemesterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromRGBO(255, 255, 255, 1),
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
+        title: Row(
+            children: <Widget>[
+              Expanded(
+                  child: Container(
+                    alignment: Alignment.topRight,
+                    color: Color.fromRGBO(255, 255, 255, 1),
+                    child: ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        style: 
+                        ButtonStyle(backgroundColor: MaterialStatePropertyAll<Color>(Color.fromRGBO(4, 29, 83, 1)),
+                        
+                            
+                          ),
+                        icon: Icon(
+                          Icons.logout_sharp,
+                          color: Colors.white,
+                        ),
+                        label: Text('Logout',
+                  )
+                ),
+                  ))  
+            ],
+        
+        )
+      ),
       body: Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -253,6 +290,51 @@ class SemesterPageState extends State<SemesterPage> {
                               ),
                             ),
                           ),
+                          Padding(
+                              padding: EdgeInsets.all(5.0),
+                              child: Container(
+                                margin: EdgeInsets.all(10.0),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Color.fromRGBO(4, 29, 83, 1),
+                                ),
+                                width: 320,
+                                alignment: Alignment.center,
+                                child: DropdownButton<String>(
+                                  borderRadius: BorderRadius.circular(5),
+                                  isExpanded: true,
+                                  underline: SizedBox(),
+                                  value: _dropDownValue,
+                                  items: _subjects
+                                      .map((item) => DropdownMenuItem<String>(
+                                    value: item,
+                                    child: Center(
+                                      child: Text(
+                                        item,
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          color: Colors.white,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ))
+                                      .toList(),
+                                  onChanged: (item) =>
+                                      setState(() => _dropDownValue = item!),
+                                  hint: const Center(
+                                    child: Text(
+                                      "Select Subject",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                  ),
+                                  dropdownColor: Color.fromRGBO(0, 70, 121, 1),
+                                ),
+                              ),
+                            ),
                         ],
                       ),
                     ),
@@ -275,7 +357,7 @@ class SemesterPageState extends State<SemesterPage> {
                           fontWeight: FontWeight.w600)),
                   onPressed: () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => HomePage()));
+                        MaterialPageRoute(builder: (context) => AttendancePage()));
                   }),
             ),
           ],
