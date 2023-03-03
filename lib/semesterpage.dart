@@ -86,6 +86,7 @@ class SemesterPageState extends State<SemesterPage> {
                 ),
               ),
             ),
+            SizedBox(height: 15,),
             Container(
               child: Column(
                 children: <Widget>[
