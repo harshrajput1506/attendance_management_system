@@ -34,7 +34,7 @@ class AttendancePageState extends State<AttendancePage> {
       backgroundColor: Color.fromRGBO(255, 255, 255, 1),
       body: Container(
         child: Padding(
-          padding: const EdgeInsets.only(top: 50,bottom:0),
+          padding: const EdgeInsets.only(top: 20, bottom: 0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -96,8 +96,10 @@ class AttendancePageState extends State<AttendancePage> {
                           color: Colors.white,
                         )),
                     onSubmit: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => SubmitPage()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SubmitPage()));
                     }),
               ),
               Padding(padding: EdgeInsets.all(15)),
