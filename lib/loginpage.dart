@@ -18,6 +18,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final passwordController = TextEditingController();
   final _streamController = StreamController<String>();
 
+  bool _isObscure = true;
+
   @override
   void initState() {
     super.initState();
@@ -152,7 +154,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     },
                                   ),
                                 ),
-                                SizedBox(height: 5,),
+                                SizedBox(
+                                  height: 5,
+                                ),
                                 StreamBuilder<String>(
                                   stream: _streamController.stream,
                                   builder: (context, snapshot) {
@@ -177,12 +181,21 @@ class _LoginScreenState extends State<LoginScreen> {
                                   alignment: Alignment.center,
                                   child: TextFormField(
                                       keyboardType: TextInputType.emailAddress,
-                                      obscureText: true,
+                                      obscureText: _isObscure,
                                       cursorColor: Colors.black,
                                       decoration: InputDecoration(
                                         icon: Icon(
                                           Icons.vpn_key,
                                         ),
+                                        suffixIcon: IconButton(
+                                            onPressed: (() {
+                                              setState(() {
+                                                _isObscure = !_isObscure;
+                                              });
+                                            }),
+                                            icon: Icon(_isObscure
+                                                ? Icons.visibility_off
+                                                : Icons.visibility)),
                                         hintText: "Enter Password",
                                         enabledBorder: InputBorder.none,
                                         focusedBorder: InputBorder.none,
