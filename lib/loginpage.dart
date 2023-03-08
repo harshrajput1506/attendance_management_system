@@ -3,6 +3,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+
+import 'login_api.dart';
 import 'semesterpage.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -14,27 +16,30 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
-  final empIdController = TextEditingController();
+  final instructorIdController = TextEditingController();
   final passwordController = TextEditingController();
   final _streamController = StreamController<String>();
 
   bool _isObscure = true;
 
+  var instructor_id = "";
+  var password = "";
+
   @override
   void initState() {
     super.initState();
-    empIdController.addListener(_checkInput);
+    instructorIdController.addListener(_checkInput);
   }
 
   @override
   void dispose() {
-    empIdController.dispose();
+    instructorIdController.dispose();
     passwordController.dispose();
     super.dispose();
   }
 
   void _checkInput() {
-    String value = empIdController.text.trim();
+    String value = instructorIdController.text.trim();
     RegExp regExp = RegExp(r'[!@#<>?":_`~;[\]\\|=+)(*&^%$#@!]+');
     if (regExp.hasMatch(value)) {
       _streamController.add('Input must not contain special characters');
@@ -52,16 +57,6 @@ class _LoginScreenState extends State<LoginScreen> {
           elevation: 0,
           backgroundColor: Colors.white,
           automaticallyImplyLeading: false,
-          // leading: IconButton(
-          //   onPressed: () {
-          //     Navigator.pop(context);
-          //   },
-          //   icon: Icon(
-          //     Icons.arrow_back_ios,
-          //     size: 20,
-          //     color: Colors.black,
-          //   ),
-          // )
         ),
         body: Container(
           height: MediaQuery.of(context).size.height,
@@ -138,7 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       enabledBorder: InputBorder.none,
                                       focusedBorder: InputBorder.none,
                                     ),
-                                    controller: empIdController,
+                                    controller: instructorIdController,
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
                                         return "Enter your ID";
@@ -151,6 +146,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                       } else {
                                         return null;
                                       }
+                                    },
+                                    onChanged: (value) {
+                                      instructor_id = value;
                                     },
                                   ),
                                 ),
@@ -180,34 +178,38 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                   alignment: Alignment.center,
                                   child: TextFormField(
-                                      keyboardType: TextInputType.emailAddress,
-                                      obscureText: _isObscure,
-                                      cursorColor: Colors.black,
-                                      decoration: InputDecoration(
-                                        icon: Icon(
-                                          Icons.vpn_key,
-                                        ),
-                                        suffixIcon: IconButton(
-                                            onPressed: (() {
-                                              setState(() {
-                                                _isObscure = !_isObscure;
-                                              });
-                                            }),
-                                            icon: Icon(_isObscure
-                                                ? Icons.visibility_off
-                                                : Icons.visibility)),
-                                        hintText: "Enter Password",
-                                        enabledBorder: InputBorder.none,
-                                        focusedBorder: InputBorder.none,
+                                    keyboardType: TextInputType.emailAddress,
+                                    obscureText: _isObscure,
+                                    cursorColor: Colors.black,
+                                    decoration: InputDecoration(
+                                      icon: Icon(
+                                        Icons.vpn_key,
                                       ),
-                                      controller: passwordController,
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return "Please Enter password";
-                                        } else if (value.length < 4) {
-                                          return "atleast 4 characters";
-                                        }
-                                      }),
+                                      suffixIcon: IconButton(
+                                          onPressed: (() {
+                                            setState(() {
+                                              _isObscure = !_isObscure;
+                                            });
+                                          }),
+                                          icon: Icon(_isObscure
+                                              ? Icons.visibility_off
+                                              : Icons.visibility)),
+                                      hintText: "Enter Password",
+                                      enabledBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                    ),
+                                    controller: passwordController,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return "Please Enter password";
+                                      } else if (value.length < 4) {
+                                        return "atleast 4 characters";
+                                      }
+                                    },
+                                    onChanged: (value) {
+                                      password = value;
+                                    },
+                                  ),
                                 ),
                                 Container(
                                   margin: EdgeInsets.only(
@@ -226,13 +228,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                             fontSize: 22,
                                             fontFamily: "Poppins",
                                             fontWeight: FontWeight.w600)),
-                                    onPressed: () {
+                                    onPressed: () async {
                                       if (_formkey.currentState!.validate()) {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    SemesterPage()));
+                                        // Navigator.push(
+                                        //     context,
+                                        //     MaterialPageRoute(
+                                        //         builder: (context) =>
+                                        //             SemesterPage()));
+                                        await login(
+                                            context, instructor_id, password);
                                       }
                                     },
                                   ),
