@@ -1,4 +1,6 @@
+import 'package:attendance_management_system/loginpage.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'attendancepage.dart';
 
@@ -53,8 +55,12 @@ class SemesterPageState extends State<SemesterPage> {
                     alignment: Alignment.topRight,
                     color: Color.fromRGBO(255, 255, 255, 1),
                     child: ElevatedButton.icon(
-                        onPressed: () {
-                          Navigator.pop(context);
+                        onPressed: () async {
+                          SharedPreferences pref = 
+                            await SharedPreferences.getInstance();
+                          await pref.clear();
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(builder: (context)=> LoginScreen()), (route) => false);
                         },
                         style: 
                         ButtonStyle(backgroundColor: MaterialStatePropertyAll<Color>(Color.fromRGBO(4, 29, 83, 1)),
