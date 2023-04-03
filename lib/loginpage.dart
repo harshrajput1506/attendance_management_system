@@ -21,6 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _streamController = StreamController<String>();
 
   bool _isObscure = true;
+  bool _isLoading = false;
 
   var instructor_id = "";
   var password = "";
@@ -46,6 +47,18 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       return;
     }
+  }
+
+  void _login() {
+    setState(() {
+      _isLoading = true;
+    });
+
+    Future.delayed(Duration(seconds: 2), () {
+      setState(() {
+        _isLoading = false;
+      });
+    });
   }
 
   @override
@@ -223,12 +236,24 @@ class _LoginScreenState extends State<LoginScreen> {
                                           borderRadius:
                                               BorderRadius.circular(50)),
                                     ),
-                                    child: Text("Login",
-                                        style: TextStyle(
-                                            fontSize: 22,
-                                            fontFamily: "Poppins",
-                                            fontWeight: FontWeight.w600)),
+                                    child: _isLoading
+                                        ? CircularProgressIndicator(
+                                            color: Colors.white,
+                                          )
+                                        : Text("Login",
+                                            style: TextStyle(
+                                                fontSize: 22,
+                                                fontFamily: "Poppins",
+                                                fontWeight: FontWeight.w600)),
                                     onPressed: () async {
+                                      setState(() {
+                                        _isLoading = true;
+                                      });
+                                      Future.delayed(Duration(seconds: 2), () {
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                      });
                                       if (_formkey.currentState!.validate()) {
                                         // Navigator.push(
                                         //     context,
