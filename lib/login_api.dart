@@ -5,11 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> login(
-  BuildContext context, 
-  String instructorId, 
-  String password
-) async {
-  final url = Uri.parse('https://sdcusarattendance.onrender.com/api/v1/loginApp');
+    BuildContext context, String instructorId, String password) async {
+  final url =
+      Uri.parse('https://sdcusarattendance.onrender.com/api/v1/loginApp');
   try {
     final response = await http.post(
       url,
@@ -36,15 +34,14 @@ Future<void> login(
         await prefs.setString('jsonData', jsonDataString);
         // Navigate to the next screen
         Navigator.push(
-          context, 
-          MaterialPageRoute(builder: (context) => SemesterPage())
-        );
-      } 
+            context, MaterialPageRoute(builder: (context) => SemesterPage()));
+      }
     } else {
       throw Exception('Failed to login');
     }
   } catch (e) {
     // Display an error message
+    print(e);
     showDialog(
       context: context,
       builder: (_) => AlertDialog(

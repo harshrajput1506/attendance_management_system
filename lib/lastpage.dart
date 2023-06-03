@@ -1,3 +1,4 @@
+import 'package:attendance_management_system/semesterpage.dart';
 import 'package:flutter/material.dart';
 
 class SubmitPage extends StatefulWidget {
@@ -10,6 +11,38 @@ class SubmitPageState extends State<SubmitPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromRGBO(255, 255, 255, 1),
+      appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.white,
+          automaticallyImplyLeading: false,
+          title: Row(
+            children: <Widget>[
+              Expanded(
+                  child: Container(
+                alignment: Alignment.topRight,
+                color: Color.fromRGBO(255, 255, 255, 1),
+                child: ElevatedButton.icon(
+                    onPressed: () async {
+                      
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                              builder: (context) => SemesterPage()),
+                          (route) => false);
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll<Color>(
+                          Color.fromRGBO(4, 29, 83, 1)),
+                    ),
+                    icon: Icon(
+                      Icons.logout_sharp,
+                      color: Colors.white,
+                    ),
+                    label: Text(
+                      'Back',
+                    )),
+              ))
+            ],
+          )),
       body: Container(
         child: Center(
           child: Column(

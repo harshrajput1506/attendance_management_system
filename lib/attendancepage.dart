@@ -10,20 +10,21 @@ class AttendancePage extends StatefulWidget {
 }
 
 class AttendancePageState extends State<AttendancePage> {
+
   List<AttendanceModel> students = [
-    AttendanceModel("Shubh", "03519011721", false),
-    AttendanceModel("Ayush", "09919011721", false),
-    AttendanceModel("Priyanshu", "13919011721", false),
-    AttendanceModel("Harsh", "20219011721", false),
-    AttendanceModel("Lakshay", "03719011721", false),
-    AttendanceModel("Sarthak", "05517011721", false),
-    AttendanceModel("Chaitanya", "10519011721", false),
-    AttendanceModel("Parth", "00519011721", false),
-    AttendanceModel("Fraz", "07519011721", false),
-    AttendanceModel("Babbar", "07519011721", false),
-    AttendanceModel("Nishant", "09519011721", false),
-    AttendanceModel("Yash", "08519011721", false),
-    AttendanceModel("Sahil", "04519011721", false),
+    AttendanceModel("Shubh", "03519011721", true),
+    AttendanceModel("Ayush", "09919011721", true),
+    AttendanceModel("Priyanshu", "13919011721", true),
+    AttendanceModel("Harsh", "20219011721", true),
+    AttendanceModel("Lakshay", "03719011721", true),
+    AttendanceModel("Sarthak", "05517011721", true),
+    AttendanceModel("Chaitanya", "10519011721", true),
+    AttendanceModel("Parth", "00519011721", true),
+    AttendanceModel("Fraz", "07519011721", true),
+    AttendanceModel("Babbar", "07519011721", true),
+    AttendanceModel("Nishant", "09519011721", true),
+    AttendanceModel("Yash", "08519011721", true),
+    AttendanceModel("Sahil", "04519011721", true),
   ];
 
   List<AttendanceModel> selectionStudents = [];
@@ -69,22 +70,6 @@ class AttendancePageState extends State<AttendancePage> {
               SizedBox(
                 height: 50,
                 width: 320,
-                // child: ElevatedButton(
-                //     style: ElevatedButton.styleFrom(
-                //       minimumSize: Size(320, 50),
-                //       backgroundColor: Color.fromRGBO(0, 70, 121, 1),
-                //       shape: RoundedRectangleBorder(
-                //           borderRadius: BorderRadius.circular(50)),
-                //     ),
-                //     child: Text("Submit",
-                //         style: TextStyle(
-                //             fontSize: 22,
-                //             fontFamily: "Poppins",
-                //             fontWeight: FontWeight.w600)),
-                //     onPressed: () {
-                //       Navigator.push(context,
-                //           MaterialPageRoute(builder: (context) => SubmitPage()));
-                //     }),
                 child: SlideAction(
                     outerColor: Color.fromRGBO(0, 70, 121, 1),
                     innerColor: Colors.white,
@@ -135,7 +120,7 @@ class AttendancePageState extends State<AttendancePage> {
         setState(() {
           students[index].isSelected = !students[index].isSelected;
           if (students[index].isSelected == true) {
-            selectionStudents.add(AttendanceModel(name, enrollmentNo, true));
+            selectionStudents.add(AttendanceModel(name, enrollmentNo, false));
           } else if (students[index].isSelected == false) {
             selectionStudents
                 .removeWhere((element) => element.name == students[index].name);
