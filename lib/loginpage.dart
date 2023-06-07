@@ -255,11 +255,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                         });
                                       });
                                       if (_formkey.currentState!.validate()) {
-                                        // Navigator.push(
-                                        //     context,
-                                        //     MaterialPageRoute(
-                                        //         builder: (context) =>
-                                        //             SemesterPage()));
                                         await login(
                                             context, instructor_id, password);
                                       }
