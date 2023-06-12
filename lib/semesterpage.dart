@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
@@ -26,9 +25,16 @@ class SemesterPageState extends State<SemesterPage> {
   final storage = FlutterSecureStorage(); // Initialize storage
   final tokenManager = TokenManager(); // Create an instance of TokenManager
 
-  Future<void> fetchData() async {
+  bool get isContinueButtonEnabled =>
+      _selectedSchool != null &&
+      _selectedStream != null &&
+      _selectedSemester != null &&
+      _selectedSubject != null;
+
+  Future<void> fetchData(BuildContext context) async {
     try {
-      final token = await tokenManager.getToken(); // get token using TokenManager
+      final token =
+          await tokenManager.getToken(); // Get token using TokenManager
 
       if (token == null) {
         throw Exception('Token not found');
@@ -37,9 +43,11 @@ class SemesterPageState extends State<SemesterPage> {
       final response = await http.get(
         Uri.parse('https://sdcusarattendance.onrender.com/api/v1/getClasses'),
         headers: {
-          HttpHeaders.cookieHeader: 'token=$token',
+          'Authorization':
+              token, // Include the token in the Authorization header
         },
       );
+      print('Token : ${token}');
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
@@ -67,7 +75,10 @@ class SemesterPageState extends State<SemesterPage> {
           content: Text('An error occurred while fetching data.'),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop(); // Navigate back to LoginPage
+              },
               child: Text('OK'),
             ),
           ],
@@ -120,13 +131,13 @@ class SemesterPageState extends State<SemesterPage> {
   @override
   void initState() {
     super.initState();
-    fetchData();
+    fetchData(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<bool>(
-      future: tokenManager.isTokenValid(), // check if token is valid
+      future: tokenManager.isTokenValid(), // Check if token is valid
       builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -189,305 +200,372 @@ class SemesterPageState extends State<SemesterPage> {
                     height: 15,
                   ),
                   Container(
-                      child: Column(
-                    children: <Widget>[
-                      Container(
-                        child: Center(
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          child: Center(
+                            child: Text(
+                              name ?? '', // Display the name variable
+                              style: TextStyle(
+                                fontFamily: "Poppins",
+                                fontSize: 30,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.start,
+                            ),
+                          ),
+                        ),
+                        Container(
                           child: Text(
-                            name ?? '', // Display the name variable
+                            "Professor",
                             style: TextStyle(
                               fontFamily: "Poppins",
-                              fontSize: 30,
-                              fontWeight: FontWeight.w500,
+                              fontSize: 20,
                             ),
                             textAlign: TextAlign.start,
                           ),
                         ),
-                      ),
-                      Container(
-                        // margin: const EdgeInsets.fromLTRB(43, 24, 43, 0),
-                        child: Text(
-                          "Professor",
-                          style: TextStyle(
-                            fontFamily: "Poppins",
-                            fontSize: 20,
-                          ),
-                          textAlign: TextAlign.start,
+                        SizedBox(
+                          height: 30.0,
                         ),
-                      ),
-                      SizedBox(
-                        height: 30.0,
-                      ),
-                      Container(
-                        child: Center(
-                          child: Column(
-                            children: <Widget>[
-                              _selectedSchool == null
-                                  ? CircularProgressIndicator()
-                                  : Padding(
-                                      padding: const EdgeInsets.all(2.0),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: Color.fromRGBO(4, 29, 83, 1),
-                                        ),
-                                        margin: EdgeInsets.all(10.0),
-                                        width: 320,
-                                        alignment: Alignment.center,
-                                        child: DropdownButton<String>(
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                          isExpanded: true,
-                                          iconEnabledColor: Colors.white,
-                                          value: _selectedSchool,
-                                          underline: SizedBox(),
-                                          items: schools.map((school) {
-                                            print(school);
-                                            return DropdownMenuItem<String>(
-                                              value: school,
-                                              child: Center(
-                                                child: Text(
-                                                  school,
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-                                            );
-                                          }).toList(),
-                                          onChanged: (newValue) async {
-                                            setState(() {
-                                              _selectedSchool = newValue;
-                                              _selectedStream =
-                                                  null; // Reset selected stream
-                                              _selectedSemester =
-                                                  null; // Reset selected semester
-                                              _selectedSubject =
-                                                  null; // Reset selected subject
-                                            });
-                                          },
-                                          hint: _selectedSchool == null
-                                              ? Center(
+                        Container(
+                          child: Center(
+                            child: Column(
+                              children: <Widget>[
+                                _selectedSchool == null
+                                    ? CircularProgressIndicator()
+                                    : Padding(
+                                        padding: const EdgeInsets.all(2.0),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            color: Color.fromRGBO(4, 29, 83, 1),
+                                          ),
+                                          margin: EdgeInsets.all(10.0),
+                                          width: 320,
+                                          alignment: Alignment.center,
+                                          child: DropdownButton<String>(
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            isExpanded: true,
+                                            iconEnabledColor: Colors.white,
+                                            value: _selectedSchool,
+                                            underline: SizedBox(),
+                                            items: schools.map((school) {
+                                              print(school);
+                                              return DropdownMenuItem<String>(
+                                                value: school,
+                                                child: Center(
                                                   child: Text(
-                                                    "Select School",
+                                                    school,
                                                     style: TextStyle(
-                                                      color: Colors.white,
                                                       fontSize: 18,
+                                                      color: Colors.white,
                                                     ),
                                                   ),
-                                                )
-                                              : null,
-                                          dropdownColor:
-                                              Color.fromRGBO(0, 70, 121, 1),
+                                                ),
+                                              );
+                                            }).toList(),
+                                            onChanged: (newValue) async {
+                                              setState(() {
+                                                _selectedSchool = newValue;
+                                                _selectedStream =
+                                                    null; // Reset selected stream
+                                                _selectedSemester =
+                                                    null; // Reset selected semester
+                                                _selectedSubject =
+                                                    null; // Reset selected subject
+                                              });
+                                            },
+                                            hint: _selectedSchool == null
+                                                ? Center(
+                                                    child: Text(
+                                                      "Select School",
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 18,
+                                                      ),
+                                                    ),
+                                                  )
+                                                : null,
+                                            dropdownColor:
+                                                Color.fromRGBO(0, 70, 121, 1),
+                                          ),
                                         ),
                                       ),
+                                Padding(
+                                  padding: const EdgeInsets.all(2.0),
+                                  child: Container(
+                                    margin: EdgeInsets.all(10.0),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Color.fromRGBO(4, 29, 83, 1),
                                     ),
-                              Padding(
-                                padding: const EdgeInsets.all(2.0),
-                                child: Container(
-                                  margin: EdgeInsets.all(10.0),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Color.fromRGBO(4, 29, 83, 1),
-                                  ),
-                                  width: 320,
-                                  alignment: Alignment.center,
-                                  child: _selectedSchool == null
-                                      ? null
-                                      : Container(
-                                          child: DropdownButton<String>(
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                            isExpanded: true,
-                                            iconEnabledColor: Colors.white,
-                                            underline: SizedBox(),
-                                            value: _selectedStream,
-                                            items: streams.map((stream) {
-                                              return DropdownMenuItem<String>(
-                                                value: stream,
-                                                child: Center(
-                                                  child: Text(
-                                                    stream,
-                                                    style: TextStyle(
-                                                      fontSize: 18,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                            }).toList(),
-                                            onChanged: (newValue) {
-                                              setState(() {
-                                                _selectedStream = newValue;
-                                                _selectedSemester = null;
-                                              });
-                                            },
-                                            hint: _selectedStream == null
-                                                ? Center(
+                                    width: 320,
+                                    alignment: Alignment.center,
+                                    child: _selectedSchool == null
+                                        ? null
+                                        : Container(
+                                            child: DropdownButton<String>(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              isExpanded: true,
+                                              iconEnabledColor: Colors.white,
+                                              underline: SizedBox(),
+                                              value: _selectedStream,
+                                              items: streams.map((stream) {
+                                                return DropdownMenuItem<String>(
+                                                  value: stream,
+                                                  child: Center(
                                                     child: Text(
-                                                      'Select Branch',
+                                                      stream,
                                                       style: TextStyle(
-                                                        color: Colors.white,
                                                         fontSize: 18,
+                                                        color: Colors.white,
                                                       ),
                                                     ),
-                                                  )
-                                                : null,
-                                            dropdownColor:
-                                                Color.fromRGBO(0, 70, 121, 1),
-                                          ),
-                                        ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(2.0),
-                                child: Container(
-                                  margin: EdgeInsets.all(10.0),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Color.fromRGBO(4, 29, 83, 1),
-                                  ),
-                                  width: 320,
-                                  alignment: Alignment.center,
-                                  child: _selectedSchool == null
-                                      ? null
-                                      : Container(
-                                          child: DropdownButton<String>(
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                            isExpanded: true,
-                                            iconEnabledColor: Colors.white,
-                                            value: _selectedSemester,
-                                            underline: SizedBox(),
-                                            items: semesters.map((semester) {
-                                              return DropdownMenuItem<String>(
-                                                value: semester,
-                                                child: Center(
-                                                  child: Text(
-                                                    semester,
-                                                    style: TextStyle(
-                                                      fontSize: 18,
-                                                      color: Colors.white,
-                                                    ),
                                                   ),
-                                                ),
-                                              );
-                                            }).toList(),
-                                            onChanged: (newValue) {
-                                              setState(() {
-                                                _selectedSemester = newValue;
-                                              });
-                                            },
-                                            hint: _selectedSemester == null
-                                                ? Center(
+                                                );
+                                              }).toList(),
+                                              onChanged: (newValue) {
+                                                setState(() {
+                                                  _selectedStream = newValue;
+                                                  _selectedSemester = null;
+                                                });
+                                              },
+                                              hint: _selectedStream == null
+                                                  ? Center(
+                                                      child: Text(
+                                                        'Select Branch',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 18,
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : null,
+                                              dropdownColor:
+                                                  Color.fromRGBO(0, 70, 121, 1),
+                                            ),
+                                          ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(2.0),
+                                  child: Container(
+                                    margin: EdgeInsets.all(10.0),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Color.fromRGBO(4, 29, 83, 1),
+                                    ),
+                                    width: 320,
+                                    alignment: Alignment.center,
+                                    child: _selectedSchool == null
+                                        ? null
+                                        : Container(
+                                            child: DropdownButton<String>(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              isExpanded: true,
+                                              iconEnabledColor: Colors.white,
+                                              value: _selectedSemester,
+                                              underline: SizedBox(),
+                                              items: semesters.map((semester) {
+                                                return DropdownMenuItem<String>(
+                                                  value: semester,
+                                                  child: Center(
                                                     child: Text(
-                                                      'Select Semester',
+                                                      semester,
                                                       style: TextStyle(
-                                                        color: Colors.white,
                                                         fontSize: 18,
+                                                        color: Colors.white,
                                                       ),
                                                     ),
-                                                  )
-                                                : null,
-                                            dropdownColor:
-                                                Color.fromRGBO(0, 70, 121, 1),
-                                          ),
-                                        ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Container(
-                                  margin: EdgeInsets.all(10.0),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Color.fromRGBO(4, 29, 83, 1),
-                                  ),
-                                  width: 320,
-                                  alignment: Alignment.center,
-                                  child: _selectedSchool == null
-                                      ? null
-                                      : Container(
-                                          child: DropdownButton<String>(
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                            isExpanded: true,
-                                            iconEnabledColor: Colors.white,
-                                            value: _selectedSubject,
-                                            underline: SizedBox(),
-                                            items: subjects.map((subject) {
-                                              return DropdownMenuItem<String>(
-                                                value: subject,
-                                                child: Center(
-                                                  child: Text(
-                                                    subject,
-                                                    style: TextStyle(
-                                                      fontSize: 18,
-                                                      color: Colors.white,
-                                                    ),
                                                   ),
-                                                ),
-                                              );
-                                            }).toList(),
-                                            onChanged: (newValue) {
-                                              setState(() {
-                                                _selectedSubject = newValue;
-                                              });
-                                            },
-                                            hint: _selectedSubject == null
-                                                ? Center(
+                                                );
+                                              }).toList(),
+                                              onChanged: (newValue) {
+                                                setState(() {
+                                                  _selectedSemester = newValue;
+                                                });
+                                              },
+                                              hint: _selectedSemester == null
+                                                  ? Center(
+                                                      child: Text(
+                                                        'Select Semester',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 18,
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : null,
+                                              dropdownColor:
+                                                  Color.fromRGBO(0, 70, 121, 1),
+                                            ),
+                                          ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Container(
+                                    margin: EdgeInsets.all(10.0),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Color.fromRGBO(4, 29, 83, 1),
+                                    ),
+                                    width: 320,
+                                    alignment: Alignment.center,
+                                    child: _selectedSchool == null
+                                        ? null
+                                        : Container(
+                                            child: DropdownButton<String>(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              isExpanded: true,
+                                              iconEnabledColor: Colors.white,
+                                              value: _selectedSubject,
+                                              underline: SizedBox(),
+                                              items: subjects.map((subject) {
+                                                return DropdownMenuItem<String>(
+                                                  value: subject,
+                                                  child: Center(
                                                     child: Text(
-                                                      'Select Subject',
+                                                      subject,
                                                       style: TextStyle(
-                                                        color: Colors.white,
                                                         fontSize: 18,
+                                                        color: Colors.white,
                                                       ),
                                                     ),
-                                                  )
-                                                : null,
-                                            dropdownColor:
-                                                Color.fromRGBO(0, 70, 121, 1),
+                                                  ),
+                                                );
+                                              }).toList(),
+                                              onChanged: (newValue) {
+                                                setState(() {
+                                                  _selectedSubject = newValue;
+                                                });
+                                              },
+                                              hint: _selectedSubject == null
+                                                  ? Center(
+                                                      child: Text(
+                                                        'Select Subject',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 18,
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : null,
+                                              dropdownColor:
+                                                  Color.fromRGBO(0, 70, 121, 1),
+                                            ),
                                           ),
-                                        ),
+                                  ),
                                 ),
-                              ),
-                              SizedBox(
-                                height: 40,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(28.0),
-                                child: Container(
-                                  child: ElevatedButton(
+                                SizedBox(
+                                  height: 40,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(28.0),
+                                  child: Container(
+                                    child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         minimumSize: Size(320, 50),
                                         backgroundColor:
                                             Color.fromRGBO(0, 70, 121, 1),
                                         shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(50)),
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                        ),
                                       ),
-                                      child: Text("Continue",
-                                          style: TextStyle(
-                                              fontSize: 22,
-                                              fontFamily: "Poppins",
-                                              fontWeight: FontWeight.w600)),
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    AttendancePage()));
-                                      }),
+                                      child: Text(
+                                        "Continue",
+                                        style: TextStyle(
+                                          fontSize: 22,
+                                          fontFamily: "Poppins",
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      onPressed: isContinueButtonEnabled
+                                          ? () async {
+                                              try {
+                                                final token = await tokenManager
+                                                    .getToken(); // Get token using TokenManager
+                                                if (token == null) {
+                                                  throw Exception(
+                                                      'Token not found');
+                                                }
+                                                final url = Uri.parse(
+                                                    'https://sdcusarattendance.onrender.com/api/v1/generatePID');
+                                                final response =
+                                                    await http.post(
+                                                  url,
+                                                  headers: {
+                                                    'Authorization': token,
+                                                    'Content-Type':
+                                                        'application/json',
+                                                  },
+                                                );
+                                                if (response.statusCode ==
+                                                        200 ||
+                                                    response.statusCode ==
+                                                        201) {
+                                                  final responseData =
+                                                      jsonDecode(response.body)
+                                                          as Map<String,
+                                                              dynamic>;
+                                                  print(
+                                                      'Response Data: $responseData');
+                                                  // Process the response data as needed
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              AttendancePage()));
+                                                } else {
+                                                  print(
+                                                      'Response Status Code: ${response.statusCode}');
+                                                  print(
+                                                      'Response Body: ${response.body}');
+                                                  throw Exception(
+                                                      'Failed to generate PID. Status code: ${response.statusCode}');
+                                                }
+                                              } catch (e) {
+                                                print('Exception details: $e');
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      AlertDialog(
+                                                    title: Text('Error'),
+                                                    content: Text(
+                                                        'An error occurred while generating PID.'),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop(); // Close the dialog
+                                                          Navigator.of(context)
+                                                              .pop(); // Navigate back to LoginPage
+                                                        },
+                                                        child: Text('OK'),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              }
+                                            }
+                                          : null,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  )),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),

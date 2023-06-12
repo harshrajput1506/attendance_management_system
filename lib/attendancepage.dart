@@ -1,8 +1,24 @@
-import 'package:attendance_management_system/attendanceModel.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:slide_to_act/slide_to_act.dart';
+import 'token_manager.dart';
 
-import 'lastpage.dart';
+class AttendanceModel {
+  final String name;
+  final String enrollmentNo;
+
+  AttendanceModel({
+    required this.name,
+    required this.enrollmentNo,
+  });
+
+  factory AttendanceModel.fromJson(Map<String, dynamic> json) {
+    return AttendanceModel(
+      name: json['name'] as String,
+      enrollmentNo: json['enrollment_no'] as String,
+    );
+  }
+}
 
 class AttendancePage extends StatefulWidget {
   @override
@@ -10,123 +26,100 @@ class AttendancePage extends StatefulWidget {
 }
 
 class AttendancePageState extends State<AttendancePage> {
+  List<AttendanceModel> studentsList = [];
+  final tokenManager = TokenManager(); // Create an instance of TokenManager
 
-  List<AttendanceModel> students = [
-    AttendanceModel("Shubh", "03519011721", true),
-    AttendanceModel("Ayush", "09919011721", true),
-    AttendanceModel("Priyanshu", "13919011721", true),
-    AttendanceModel("Harsh", "20219011721", true),
-    AttendanceModel("Lakshay", "03719011721", true),
-    AttendanceModel("Sarthak", "05517011721", true),
-    AttendanceModel("Chaitanya", "10519011721", true),
-    AttendanceModel("Parth", "00519011721", true),
-    AttendanceModel("Fraz", "07519011721", true),
-    AttendanceModel("Babbar", "07519011721", true),
-    AttendanceModel("Nishant", "09519011721", true),
-    AttendanceModel("Yash", "08519011721", true),
-    AttendanceModel("Sahil", "04519011721", true),
-  ];
+ Future<List<AttendanceModel>> getStudentsDataApi(String batchId, String semster) async {
+  try {
+    final token = await tokenManager.getToken(); // Retrieve the token using TokenManager
+    if (token == null) {
+      throw Exception('Token not found');
+    }
 
-  List<AttendanceModel> selectionStudents = [];
+    final headers = {
+      'Authorization': token, // Include the token in the Authorization header as a Bearer token
+      'Content-Type': 'application/json',
+    };
+
+    final url = Uri.parse('https://sdcusarattendance.onrender.com/api/v1/getStudents');
+
+    final body = {
+      'batchId': batchId,
+      'semster': semster,
+    };
+
+    final response = await http.post(url, headers: headers, body: json.encode(body));
+
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+
+      if (responseData['success']) {
+        final students = responseData['result'] as List;
+        List<AttendanceModel> studentsList =
+            students.map((json) => AttendanceModel.fromJson(json)).toList();
+        print("Fetched students: $studentsList");
+        return studentsList;
+      } else {
+        throw Exception(responseData['message']);
+      }
+    } else {
+      throw Exception('Failed to load data. Status code: ${response.statusCode}');
+    }
+  } catch (e) {
+    print(e);
+    throw e;
+  }
+}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromRGBO(255, 255, 255, 1),
-      body: Container(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 20, bottom: 0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              SizedBox(
-                height: 100,
-                child: Center(
-                  child: Text(
-                    "Computer Networks",
-                    style: TextStyle(
-                        fontSize: 27,
-                        fontFamily: "Poppins",
-                        fontWeight: FontWeight.w600),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-              Container(
-                child: Expanded(
-                  child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: students.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return StudentItem(
-                            students[index].name,
-                            students[index].enrollmentNo,
-                            students[index].isSelected,
-                            index);
-                      }),
-                ),
-              ),
-              Padding(padding: EdgeInsets.all(15)),
-              SizedBox(
-                height: 50,
-                width: 320,
-                child: SlideAction(
-                    outerColor: Color.fromRGBO(0, 70, 121, 1),
-                    innerColor: Colors.white,
-                    child: Text("Submit",
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontFamily: "Poppins",
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        )),
-                    onSubmit: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SubmitPage()));
-                    }),
-              ),
-              Padding(padding: EdgeInsets.all(15)),
-            ],
+      body: Column(
+        children: [
+          Expanded(
+            child: FutureBuilder<List<AttendanceModel>>(
+              future: getStudentsDataApi("23", "4"),
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data != null) {
+                  print("Snapshot data: ${snapshot.data}");
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      final student = snapshot.data![index];
+                      return ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: Color.fromRGBO(4, 29, 83, 1),
+                          child: Icon(
+                            Icons.person_outline_outlined,
+                            color: Colors.white,
+                          ),
+                        ),
+                        title: Text(student.name),
+                        subtitle: Text(student.enrollmentNo),
+                        trailing: Icon(
+                          Icons.check_circle,
+                          color: Color.fromRGBO(4, 29, 83, 1),
+                        ),
+                      );
+                    },
+                  );
+                } else if (snapshot.hasError) {
+                  return AlertDialog(
+                    title: Text('Welcome'),
+                    content: Text('${snapshot.error}'),
+                    actions: [],
+                  );
+                }
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+            ),
           ),
-        ),
+        ],
       ),
-    );
-  }
-
-  Widget StudentItem(
-      String name, String enrollmentNo, bool isSelected, int index) {
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: Color.fromRGBO(4, 29, 83, 1),
-        child: Icon(
-          Icons.person_outline_outlined,
-          color: Colors.white,
-        ),
-      ),
-      title: Text(
-        name,
-        style: TextStyle(fontWeight: FontWeight.w600),
-      ),
-      subtitle: Text(enrollmentNo),
-      trailing: isSelected
-          ? Icon(
-              Icons.check_circle,
-              color: Color.fromRGBO(4, 29, 83, 1),
-            )
-          : Icon(Icons.check_circle_outline_outlined, color: Colors.grey),
-      onTap: () {
-        setState(() {
-          students[index].isSelected = !students[index].isSelected;
-          if (students[index].isSelected == true) {
-            selectionStudents.add(AttendanceModel(name, enrollmentNo, false));
-          } else if (students[index].isSelected == false) {
-            selectionStudents
-                .removeWhere((element) => element.name == students[index].name);
-          }
-        });
-      },
     );
   }
 }
