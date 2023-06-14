@@ -21,6 +21,7 @@ class SemesterPageState extends State<SemesterPage> {
   String? _selectedStream;
   String? _selectedSemester;
   String? _selectedSubject;
+  String? _selectedBatchID;
   late String name = '';
   final storage = FlutterSecureStorage(); // Initialize storage
   final tokenManager = TokenManager(); // Create an instance of TokenManager
@@ -30,6 +31,7 @@ class SemesterPageState extends State<SemesterPage> {
       _selectedStream != null &&
       _selectedSemester != null &&
       _selectedSubject != null;
+
 
   Future<void> fetchData(BuildContext context) async {
     try {
@@ -48,7 +50,6 @@ class SemesterPageState extends State<SemesterPage> {
         },
       );
       print('Token : ${token}');
-
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
         setState(() {
@@ -86,6 +87,22 @@ class SemesterPageState extends State<SemesterPage> {
       );
     }
   }
+
+  String? getSubjectCode(String subjectName) {
+  final Map<String, String> subjectCodeMap = {
+    'Software Engineering': 'ARD 202',
+    'Convex Optimisation': 'ABS 212',
+    'Introduction to Machine Learning': 'ARM206',
+    'Operating System': 'ARD204',
+    'Design and Analysis of Algorithms': 'ARM208',
+    'Maths': 'ICT-207',
+    'DSA': 'ICT-204',
+    'Data Mining': 'ARM207',
+  };
+  // ignore: avoid_print
+  print(subjectCodeMap[subjectName]);
+  return subjectCodeMap[subjectName];
+}
 
   void updateStateWithBatches(List<dynamic> batchesData) {
     Set<String> uniqueSchools = Set<String>();
@@ -507,6 +524,12 @@ class SemesterPageState extends State<SemesterPage> {
                                                         'application/json',
                                                   },
                                                 );
+                                                jsonEncode({
+                                                  'code':
+                                                      getSubjectCode(_selectedSubject!),
+                                                  'batchId': batchId(),
+                                                });
+                                                
                                                 if (response.statusCode ==
                                                         200 ||
                                                     response.statusCode ==
@@ -579,4 +602,6 @@ class SemesterPageState extends State<SemesterPage> {
       },
     );
   }
+
+  batchId() {}
 }
