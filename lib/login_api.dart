@@ -1,15 +1,11 @@
 import 'dart:convert';
-import 'package:attendance_management_system/semesterpage.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'semesterpage.dart';
 import 'token_manager.dart';
 
-Future<void> login(
-    BuildContext context, String instructorId, String password) async {
-  final url =
-      Uri.parse('https://sdcusarattendance.onrender.com/api/v1/loginApp');
-  final storage = FlutterSecureStorage(); // initialize storage
+Future<void> login(BuildContext context, String instructorId, String password) async {
+  final url = Uri.parse('https://sdcusarattendance.onrender.com/api/v1/loginApp');
   final tokenManager = TokenManager(); // create an instance of TokenManager
 
   try {
@@ -32,8 +28,6 @@ Future<void> login(
 
       if (success) {
         await tokenManager.setToken(token); // save token using TokenManager
-        final jsonDataString = json.encode(result);
-        await storage.write(key: 'jsonData', value: jsonDataString);
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => SemesterPage()),
@@ -59,32 +53,5 @@ Future<void> login(
         ],
       ),
     );
-  }
-}
-
-
-Future<http.Response> fetchData(String endpoint) async {
-  final storage = FlutterSecureStorage(); // initialize storage
-  try {
-    String? token = await storage.read(key: 'token'); // read token from storage
-    if (token == null) {
-      throw Exception('Token not found');
-    }
-    final response = await http.get(
-      Uri.parse('https://sdcusarattendance.onrender.com/api/v1/' + endpoint),
-      // Send authorization headers to the backend.
-      headers: {
-        'Cookie': 'token=$token',
-      },
-    );
-    if (response.statusCode == 200) {
-      return response;
-    } else {
-      throw Exception('Failed to fetch data: ${response.statusCode}');
-    }
-  } catch (e) {
-    // Handle token or network-related errors
-    print(e);
-    throw Exception('Failed to fetch data: $e');
   }
 }
