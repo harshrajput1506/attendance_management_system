@@ -22,6 +22,7 @@ class SemesterPageState extends State<SemesterPage> {
   String? _selectedSemester;
   String? _selectedSubject;
   String? _selectedBatchID;
+  bool _isLoading = false;
   late String name = '';
   final storage = FlutterSecureStorage(); // Initialize storage
   final tokenManager = TokenManager(); // Create an instance of TokenManager
@@ -495,16 +496,38 @@ class SemesterPageState extends State<SemesterPage> {
                                               BorderRadius.circular(50),
                                         ),
                                       ),
-                                      child: Text(
-                                        "Continue",
-                                        style: TextStyle(
-                                          fontSize: 22,
-                                          fontFamily: "Poppins",
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
+                                      child: _isLoading
+                                          ? Container(
+                                              width: 50,
+                                              height: 50,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: Colors.blue,
+                                              ),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  strokeWidth: 3,
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation<
+                                                          Color>(Colors.white),
+                                                ),
+                                              ),
+                                            ): Text(
+                                              "Continue",
+                                              style: TextStyle(
+                                                fontSize: 22,
+                                                fontFamily: "Poppins",
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
                                       onPressed: isContinueButtonEnabled
                                           ? () async {
+                                              setState(() {
+                                                _isLoading = true;
+                                              });
                                               try {
                                                 final token = await tokenManager
                                                     .getToken(); // Get token using TokenManager
@@ -619,45 +642,45 @@ class SemesterPageState extends State<SemesterPage> {
   }
 
   Future<String?> getBatchId() async {
-  final url = Uri.parse('https://sdcusarattendance.onrender.com/api/v1/getClasses');
+    final url =
+        Uri.parse('https://sdcusarattendance.onrender.com/api/v1/getClasses');
 
-  try {
-    final token = await tokenManager.getToken();
-    if (token == null) {
-      throw Exception('Token not found');
-    }
+    try {
+      final token = await tokenManager.getToken();
+      if (token == null) {
+        throw Exception('Token not found');
+      }
 
-    final response = await http.get(
-      url,
-      headers: {
-        'Authorization': token,
-      },
-    );
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': token,
+        },
+      );
 
-    if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
 
-      if (jsonResponse['success'] == true) {
-        final data = jsonResponse['data'];
-        final batches = data['batches'] as List<dynamic>;
+        if (jsonResponse['success'] == true) {
+          final data = jsonResponse['data'];
+          final batches = data['batches'] as List<dynamic>;
 
-        if (batches.isNotEmpty) {
-          final batch = batches.first;
-          final batchId = batch['batch_id'] as String;
-          return batchId;
+          if (batches.isNotEmpty) {
+            final batch = batches.first;
+            final batchId = batch['batch_id'] as String;
+            return batchId;
+          }
+        } else {
+          print('API request failed: ${jsonResponse['message']}');
         }
       } else {
-        print('API request failed: ${jsonResponse['message']}');
+        print('API request failed with status code: ${response.statusCode}');
       }
-    } else {
-      print('API request failed with status code: ${response.statusCode}');
+
+      return null; // Return null if the API response is invalid or no batch ID found
+    } catch (e) {
+      print('Exception in getBatchId(): $e');
+      return null; // Return null in case of any exception
     }
-
-    return null; // Return null if the API response is invalid or no batch ID found
-  } catch (e) {
-    print('Exception in getBatchId(): $e');
-    return null; // Return null in case of any exception
   }
-}
-
 }

@@ -1,21 +1,17 @@
-// ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors
-
 import 'dart:async';
-
 import 'package:flutter/material.dart';
-
 import 'login_api.dart';
 import 'semesterpage.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final instructorIdController = TextEditingController();
   final passwordController = TextEditingController();
   final _streamController = StreamController<String>();
@@ -36,6 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void dispose() {
     instructorIdController.dispose();
     passwordController.dispose();
+    _streamController.close();
     super.dispose();
   }
 
@@ -45,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (regExp.hasMatch(value)) {
       _streamController.add('Input must not contain special characters');
     } else {
-      return;
+      _streamController.add('');
     }
   }
 
@@ -53,29 +50,24 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       _isLoading = true;
     });
-
-    Future.delayed(Duration(seconds: 2), () {
-      setState(() {
-        _isLoading = false;
-      });
-    });
+    // Perform login logic here
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        elevation: 0,
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.white,
-          automaticallyImplyLeading: false,
-        ),
-        body: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          child: SingleChildScrollView(
-              child: Column(
+        automaticallyImplyLeading: false,
+      ),
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        child: SingleChildScrollView(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Container(
@@ -124,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           color: Color.fromRGBO(4, 29, 83, 1),
                           child: Form(
-                            key: _formkey,
+                            key: _formKey,
                             child: Column(
                               children: <Widget>[
                                 Container(
@@ -156,12 +148,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                         if (regExp.hasMatch(value)) {
                                           return 'Input must not contain special characters';
                                         }
-                                      } else {
-                                        return null;
                                       }
+                                      return null;
                                     },
                                     onChanged: (value) {
-                                      instructor_id = value;
+                                      setState(() {
+                                        instructor_id = value;
+                                      });
                                     },
                                   ),
                                 ),
@@ -171,7 +164,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 StreamBuilder<String>(
                                   stream: _streamController.stream,
                                   builder: (context, snapshot) {
-                                    if (snapshot.hasData) {
+                                    if (snapshot.hasData &&
+                                        snapshot.data!.isNotEmpty) {
                                       return Icon(
                                         Icons.error,
                                         color: Colors.red,
@@ -199,14 +193,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                         Icons.vpn_key,
                                       ),
                                       suffixIcon: IconButton(
-                                          onPressed: (() {
-                                            setState(() {
-                                              _isObscure = !_isObscure;
-                                            });
-                                          }),
-                                          icon: Icon(_isObscure
-                                              ? Icons.visibility_off
-                                              : Icons.visibility)),
+                                        onPressed: () {
+                                          setState(() {
+                                            _isObscure = !_isObscure;
+                                          });
+                                        },
+                                        icon: Icon(_isObscure
+                                            ? Icons.visibility_off
+                                            : Icons.visibility),
+                                      ),
                                       hintText: "Enter Password",
                                       enabledBorder: InputBorder.none,
                                       focusedBorder: InputBorder.none,
@@ -214,13 +209,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                     controller: passwordController,
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
-                                        return "Please Enter password";
+                                        return "Please enter password";
                                       } else if (value.length < 4) {
-                                        return "atleast 4 characters";
+                                        return "Password should be at least 4 characters";
                                       }
+                                      return null;
                                     },
                                     onChanged: (value) {
-                                      password = value;
+                                      setState(() {
+                                        password = value;
+                                      });
                                     },
                                   ),
                                 ),
@@ -233,30 +231,46 @@ class _LoginScreenState extends State<LoginScreen> {
                                       backgroundColor:
                                           Color.fromRGBO(0, 70, 121, 1),
                                       shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(50)),
+                                        borderRadius: BorderRadius.circular(50),
+                                      ),
                                     ),
                                     child: _isLoading
-                                        ? CircularProgressIndicator(
-                                            color: Colors.white,
+                                        ? Container(
+                                            width: 50,
+                                            height: 50,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.blue,
+                                            ),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 3,
+                                                valueColor:
+                                                    AlwaysStoppedAnimation<
+                                                        Color>(Colors.white),
+                                              ),
+                                            ),
                                           )
-                                        : Text("Login",
+                                        : Text(
+                                            "Login",
                                             style: TextStyle(
-                                                fontSize: 22,
-                                                fontFamily: "Poppins",
-                                                fontWeight: FontWeight.w600)),
+                                              fontSize: 22,
+                                              fontFamily: "Poppins",
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
                                     onPressed: () async {
                                       setState(() {
                                         _isLoading = true;
                                       });
-                                      Future.delayed(Duration(seconds: 2), () {
-                                        setState(() {
-                                          _isLoading = false;
-                                        });
-                                      });
-                                      if (_formkey.currentState!.validate()) {
+                                      if (_formKey.currentState!.validate()) {
                                         await login(
-                                            context, instructor_id, password);
+                                          context,
+                                          instructor_id,
+                                          password,
+                                        );
                                       }
                                     },
                                   ),
@@ -271,7 +285,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ],
-          )),
-        ));
+          ),
+        ),
+      ),
+    );
   }
 }
