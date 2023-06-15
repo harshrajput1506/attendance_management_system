@@ -32,7 +32,6 @@ class SemesterPageState extends State<SemesterPage> {
       _selectedSemester != null &&
       _selectedSubject != null;
 
-
   Future<void> fetchData(BuildContext context) async {
     try {
       final token =
@@ -89,20 +88,20 @@ class SemesterPageState extends State<SemesterPage> {
   }
 
   String? getSubjectCode(String subjectName) {
-  final Map<String, String> subjectCodeMap = {
-    'Software Engineering': 'ARD 202',
-    'Convex Optimisation': 'ABS 212',
-    'Introduction to Machine Learning': 'ARM206',
-    'Operating System': 'ARD204',
-    'Design and Analysis of Algorithms': 'ARM208',
-    'Maths': 'ICT-207',
-    'DSA': 'ICT-204',
-    'Data Mining': 'ARM207',
-  };
-  // ignore: avoid_print
-  print(subjectCodeMap[subjectName]);
-  return subjectCodeMap[subjectName];
-}
+    final Map<String, String> subjectCodeMap = {
+      'Software Engineering': 'ARD201',
+      'Convex Optimisation': 'ABS212',
+      'Introduction to Machine Learning': 'ARM206',
+      'Operating System': 'ARD204',
+      'Design and Analysis of Algorithms': 'ARM208',
+      'Maths': 'ICT207',
+      'DSA': 'ICT204',
+      'Data Mining': 'ARM207',
+    };
+    // ignore: avoid_print
+    print(subjectCodeMap[subjectName]);
+    return subjectCodeMap[subjectName];
+  }
 
   void updateStateWithBatches(List<dynamic> batchesData) {
     Set<String> uniqueSchools = Set<String>();
@@ -513,46 +512,62 @@ class SemesterPageState extends State<SemesterPage> {
                                                   throw Exception(
                                                       'Token not found');
                                                 }
-                                                final url = Uri.parse(
-                                                    'https://sdcusarattendance.onrender.com/api/v1/generatePID');
-                                                final response =
-                                                    await http.post(
-                                                  url,
-                                                  headers: {
-                                                    'Authorization': token,
-                                                    'Content-Type':
-                                                        'application/json',
-                                                  },
-                                                );
-                                                jsonEncode({
-                                                  'code':
-                                                      getSubjectCode(_selectedSubject!),
-                                                  'batchId': batchId(),
-                                                });
-                                                
-                                                if (response.statusCode ==
-                                                        200 ||
-                                                    response.statusCode ==
-                                                        201) {
-                                                  final responseData =
-                                                      jsonDecode(response.body)
-                                                          as Map<String,
-                                                              dynamic>;
-                                                  print(
-                                                      'Response Data: $responseData');
-                                                  // Process the response data as needed
-                                                  Navigator.push(
+
+                                                final batchIdValue =
+                                                    await getBatchId();
+                                                if (batchIdValue != null) {
+                                                  final jsonData = jsonEncode({
+                                                    'code': getSubjectCode(
+                                                        _selectedSubject!),
+                                                    'batchId': batchIdValue,
+                                                  });
+                                                  print(getSubjectCode(
+                                                      _selectedSubject!));
+                                                  print(batchIdValue);
+
+                                                  final url = Uri.parse(
+                                                      'https://sdcusarattendance.onrender.com/api/v1/generatePID');
+
+                                                  final response =
+                                                      await http.post(
+                                                    url,
+                                                    headers: {
+                                                      'Authorization': token,
+                                                      'Content-Type':
+                                                          'application/json',
+                                                    },
+                                                    body: jsonData,
+                                                  );
+
+                                                  if (response.statusCode ==
+                                                          200 ||
+                                                      response.statusCode ==
+                                                          201) {
+                                                    final responseData =
+                                                        jsonDecode(
+                                                                response.body)
+                                                            as Map<String,
+                                                                dynamic>;
+                                                    print(
+                                                        'Response Data: $responseData');
+                                                    // Process the response data as needed
+                                                    Navigator.push(
                                                       context,
                                                       MaterialPageRoute(
                                                           builder: (context) =>
-                                                              AttendancePage()));
+                                                              AttendancePage()),
+                                                    );
+                                                  } else {
+                                                    print(
+                                                        'Response Status Code: ${response.statusCode}');
+                                                    print(
+                                                        'Response Body: ${response.body}');
+                                                    throw Exception(
+                                                        'Failed to generate PID. Status code: ${response.statusCode}');
+                                                  }
                                                 } else {
                                                   print(
-                                                      'Response Status Code: ${response.statusCode}');
-                                                  print(
-                                                      'Response Body: ${response.body}');
-                                                  throw Exception(
-                                                      'Failed to generate PID. Status code: ${response.statusCode}');
+                                                      'Failed to retrieve batch ID');
                                                 }
                                               } catch (e) {
                                                 print('Exception details: $e');
@@ -603,5 +618,46 @@ class SemesterPageState extends State<SemesterPage> {
     );
   }
 
-  batchId() {}
+  Future<String?> getBatchId() async {
+  final url = Uri.parse('https://sdcusarattendance.onrender.com/api/v1/getClasses');
+
+  try {
+    final token = await tokenManager.getToken();
+    if (token == null) {
+      throw Exception('Token not found');
+    }
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': token,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(response.body);
+
+      if (jsonResponse['success'] == true) {
+        final data = jsonResponse['data'];
+        final batches = data['batches'] as List<dynamic>;
+
+        if (batches.isNotEmpty) {
+          final batch = batches.first;
+          final batchId = batch['batch_id'] as String;
+          return batchId;
+        }
+      } else {
+        print('API request failed: ${jsonResponse['message']}');
+      }
+    } else {
+      print('API request failed with status code: ${response.statusCode}');
+    }
+
+    return null; // Return null if the API response is invalid or no batch ID found
+  } catch (e) {
+    print('Exception in getBatchId(): $e');
+    return null; // Return null in case of any exception
+  }
+}
+
 }

@@ -153,129 +153,131 @@ class AttendancePageState extends State<AttendancePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color.fromRGBO(255, 255, 255, 1),
-      body: Container(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 20, bottom: 0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              SizedBox(
-                height: 100,
-                child: Center(
-                  child: Column(
-                    children: [
-                      Text(
-                        courseName,
-                        style: TextStyle(
-                          fontSize: 27,
-                          fontFamily: "Poppins",
-                          fontWeight: FontWeight.w600,
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Color.fromRGBO(255, 255, 255, 1),
+        body: Container(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 20, bottom: 0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                SizedBox(
+                  height: 100,
+                  child: Center(
+                    child: Column(
+                      children: [
+                        Text(
+                          courseName,
+                          style: TextStyle(
+                            fontSize: 27,
+                            fontFamily: "Poppins",
+                            fontWeight: FontWeight.w600,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        stream, // Add the stream variable here
-                        style: TextStyle(
-                          fontSize: 25,
-                          fontFamily: "Poppins",
-                          fontWeight: FontWeight.w600,
+                        SizedBox(height: 10),
+                        Text(
+                          stream, // Add the stream variable here
+                          style: TextStyle(
+                            fontSize: 25,
+                            fontFamily: "Poppins",
+                            fontWeight: FontWeight.w600,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                child: Expanded(
-                  child: FutureBuilder<List<AttendanceModel>>(
-                    future: getStudentsDataApi("23", "4"),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData && snapshot.data != null) {
-                        return ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: snapshot.data!.length,
-                          itemBuilder: (context, index) {
-                            final student = snapshot.data![index];
-                            return ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor: Color.fromRGBO(4, 29, 83, 1),
-                                child: Icon(
-                                  Icons.person_outline_outlined,
-                                  color: Colors.white,
+                Container(
+                  child: Expanded(
+                    child: FutureBuilder<List<AttendanceModel>>(
+                      future: getStudentsDataApi("23", "4"),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData && snapshot.data != null) {
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (context, index) {
+                              final student = snapshot.data![index];
+                              return ListTile(
+                                leading: CircleAvatar(
+                                  backgroundColor: Color.fromRGBO(4, 29, 83, 1),
+                                  child: Icon(
+                                    Icons.person_outline_outlined,
+                                    color: Colors.white,
+                                  ),
                                 ),
-                              ),
-                              title: Text(student.name),
-                              subtitle: Text(student.enrollmentNo),
-                              trailing: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    final isSelected =
-                                        !selectedStudents.contains(student);
-                                    if (isSelected) {
-                                      selectedStudents.add(
-                                          student); // Add the student to the selected students list
-                                    } else {
-                                      selectedStudents.remove(
-                                          student); // Remove the student from the selected students list
-                                    }
-                                    print(
-                                        'Selected Students: $selectedStudents');
-                                  });
-                                },
-                                child: Icon(
-                                  selectedStudents.contains(student)
-                                      ? Icons.check_circle
-                                      : Icons.circle,
-                                  color: selectedStudents.contains(student)
-                                      ? Color.fromRGBO(4, 29, 83, 1)
-                                      : Colors.grey,
+                                title: Text(student.name),
+                                subtitle: Text(student.enrollmentNo),
+                                trailing: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      final isSelected =
+                                          !selectedStudents.contains(student);
+                                      if (isSelected) {
+                                        selectedStudents.add(
+                                            student); // Add the student to the selected students list
+                                      } else {
+                                        selectedStudents.remove(
+                                            student); // Remove the student from the selected students list
+                                      }
+                                      print(
+                                          'Selected Students: $selectedStudents');
+                                    });
+                                  },
+                                  child: Icon(
+                                    selectedStudents.contains(student)
+                                        ? Icons.check_circle
+                                        : Icons.circle,
+                                    color: selectedStudents.contains(student)
+                                        ? Color.fromRGBO(4, 29, 83, 1)
+                                        : Colors.grey,
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          );
+                        } else if (snapshot.hasError) {
+                          return AlertDialog(
+                            title: Text('Welcome'),
+                            content: Text('${snapshot.error}'),
+                            actions: [],
+                          );
+                        }
+                        return Center(
+                          child: CircularProgressIndicator(),
                         );
-                      } else if (snapshot.hasError) {
-                        return AlertDialog(
-                          title: Text('Welcome'),
-                          content: Text('${snapshot.error}'),
-                          actions: [],
-                        );
-                      }
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      },
+                    ),
+                  ),
+                ),
+                Padding(padding: EdgeInsets.all(15)),
+                SizedBox(
+                  height: 50,
+                  width: 320,
+                  child: SlideAction(
+                    outerColor: Color.fromRGBO(0, 70, 121, 1),
+                    innerColor: Colors.white,
+                    child: Text(
+                      "Submit",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontFamily: "Poppins",
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                    onSubmit: () {
+                      markAttendance(
+                          selectedStudents); // Call the function to mark attendance
                     },
                   ),
                 ),
-              ),
-              Padding(padding: EdgeInsets.all(15)),
-              SizedBox(
-                height: 50,
-                width: 320,
-                child: SlideAction(
-                  outerColor: Color.fromRGBO(0, 70, 121, 1),
-                  innerColor: Colors.white,
-                  child: Text(
-                    "Submit",
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontFamily: "Poppins",
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                  onSubmit: () {
-                    markAttendance(
-                        selectedStudents); // Call the function to mark attendance
-                  },
-                ),
-              ),
-              Padding(padding: EdgeInsets.all(15)),
-            ],
+                Padding(padding: EdgeInsets.all(15)),
+              ],
+            ),
           ),
         ),
       ),
@@ -283,47 +285,47 @@ class AttendancePageState extends State<AttendancePage> {
   }
 
   Future<void> markAttendance(List<AttendanceModel> selectedStudents) async {
-    try {
-      final token = await tokenManager
-          .getToken(); // Retrieve the token using TokenManager
-      if (token == null) {
-        throw Exception('Token not found');
-      }
-
-      final headers = {
-        'Authorization': token,
-        'Content-Type': 'application/json',
-      };
-
-      final url = Uri.parse(
-          'https://sdcusarattendance.onrender.com/api/v1/markingattendance');
-
-      final body = {
-        'data': selectedStudents.map((student) {
-          return {
-            'enrollment_no': student.enrollmentNo,
-            'attendancestatus':
-                1, // Set the attendance status as required (1 for present, 0 for absent)
-          };
-        }).toList(),
-      };
-
-      final response =
-          await http.post(url, headers: headers, body: json.encode(body));
-
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body) as Map<String, dynamic>;
-        // Process the response if needed
-        print('Attendance marked successfully');
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => SubmitPage()));
-      } else {
-        throw Exception(
-            'Failed to mark attendance. Status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      print(e);
-      throw e;
+  try {
+    final token = await tokenManager.getToken(); // Retrieve the token using TokenManager
+    if (token == null) {
+      throw Exception('Token not found');
     }
+
+    final headers = {
+      'Authorization': token,
+      'Content-Type': 'application/json',
+    };
+
+    final url = Uri.parse('https://sdcusarattendance.onrender.com/api/v1/markingattendance');
+
+    final List<Map<String, dynamic>> attendanceList = selectedStudents
+        .map((student) => {
+              'enrollment_no': student.enrollmentNo,
+              'attendancestatus': 1,
+            })
+        .toList();
+
+    final body = {
+      'data': attendanceList,
+    };
+
+    final response =
+        await http.post(url, headers: headers, body: jsonEncode(body));
+
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+      // Process the response if needed
+      print('Attendance marked successfully');
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => SubmitPage()));
+    } else {
+      throw Exception(
+          'Failed to mark attendance. Status code: ${response.statusCode}');
+    }
+  } catch (e) {
+    print(e);
+    throw e;
   }
+}
+
 }
