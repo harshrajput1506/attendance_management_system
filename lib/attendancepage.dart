@@ -45,58 +45,61 @@ class AttendancePageState extends State<AttendancePage> {
   bool _isMounted = false;
   bool markAllPresent = false;
 
-  Future<String> getCourseName() async {
-    try {
-      final token = await tokenManager.getToken();
-      if (token == null) {
-        throw Exception('Token not found');
-      }
+  // Future<String> getCourseName() async {
+  //   try {
+  //     final token = await tokenManager.getToken();
+  //     if (token == null) {
+  //       throw Exception('Token not found');
+  //     }
 
-      final headers = {
-        'Authorization': token,
-        'Content-Type': 'application/json',
-      };
+  //     final headers = {
+  //       'Authorization': token,
+  //       'Content-Type': 'application/json',
+  //     };
 
-      final url =
-          Uri.parse('https://sdcusarattendance.onrender.com/api/v1/getClasses');
+  //     final url =
+  //         Uri.parse('https://sdcusarattendance.onrender.com/api/v1/getClasses');
 
-      final response = await http.get(url, headers: headers);
+  //     final response = await http.get(url, headers: headers);
 
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body) as Map<String, dynamic>;
-        final data = responseData['data'] as Map<String, dynamic>;
-        final batches = data['batches'] as List<dynamic>;
-        final subjectName = batches[0]['subject_name'] as String;
-        final stream = batches[0]['stream'] as String;
-        setState(() {
-          courseName = subjectName;
-          this.stream = stream;
-        });
-        return subjectName;
-      } else {
-        throw Exception('Failed to fetch subject name');
-      }
-    } catch (e) {
-      print(e);
-      throw e;
-    }
-  }
+  //     if (response.statusCode == 200) {
+  //       final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+  //       final data = responseData['data'] as Map<String, dynamic>;
+  //       final batches = data['batches'] as List<dynamic>;
+  //       final subjectName = batches[0]['subject_name'] as String;
+  //       final stream = batches[0]['stream'] as String;
+  //       setState(() {
+  //         courseName = subjectName;
+  //         this.stream = stream;
+  //       });
+  //       return subjectName;
+  //     } else {
+  //       throw Exception('Failed to fetch subject name');
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //     throw e;
+  //   }
+  // }
 
   @override
   void initState() {
+    print(widget.responseData);
     super.initState();
     _isMounted = true;
-    getCourseName().then((name) {
-      if (_isMounted) {
-        setState(() {
-          courseName = name;
-        });
-      }
-    }).catchError((error) {
-      print('Error fetching course name: $error');
-    });
 
-    getStudentsDataApi("23", "4").then((students) {
+    // getCourseName().then((name) {
+    //   if (_isMounted) {
+    //     setState(() {
+    //       courseName = name;
+    //     });
+    //   }
+    // }).catchError((error) {
+    //   print('Error fetching course name: $error');
+    // });
+
+    getStudentsDataApi(widget.responseData[1][0], widget.responseData[1][2])
+        .then((students) {
       if (_isMounted) {
         setState(() {
           studentsList = students;
@@ -115,7 +118,7 @@ class AttendancePageState extends State<AttendancePage> {
   }
 
   Future<List<AttendanceModel>> getStudentsDataApi(
-      String batchId, String semester) async {
+      int batchId, int semester) async {
     try {
       final token = await tokenManager.getToken();
       if (token == null) {
@@ -178,8 +181,40 @@ class AttendancePageState extends State<AttendancePage> {
                   child: Center(
                     child: Column(
                       children: [
+                        // Text(
+                        //   widget.responseData[1][5],
+                        //   style: TextStyle(
+                        //     fontSize: 18,
+                        //     fontFamily: "Poppins",
+                        //     fontWeight: FontWeight.w600,
+                        //   ),
+                        //   textAlign: TextAlign.center,
+                        // ),
+                        Row(
+                          children: [
+                            Text(
+                              widget.responseData[1][3],
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontFamily: "Poppins",
+                                fontWeight: FontWeight.w600,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            Text(
+                              widget.responseData[1][4],
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontFamily: "Poppins",
+                                fontWeight: FontWeight.w600,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 5),
                         Text(
-                          courseName,
+                          widget.responseData[1][5],
                           style: TextStyle(
                             fontSize: 18,
                             fontFamily: "Poppins",
@@ -187,11 +222,11 @@ class AttendancePageState extends State<AttendancePage> {
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        SizedBox(height: 10),
+                        SizedBox(height: 5),
                         Text(
-                          stream,
+                          widget.responseData[1][1],
                           style: TextStyle(
-                            fontSize: 1,
+                            fontSize: 18,
                             fontFamily: "Poppins",
                             fontWeight: FontWeight.w600,
                           ),
@@ -248,6 +283,7 @@ class AttendancePageState extends State<AttendancePage> {
                       itemBuilder: (context, index) {
                         final student = studentsList[index];
                         final bool isChecked = isSelected[index];
+                        print(index);
 
                         return ListTile(
                           leading: CircleAvatar(
@@ -274,7 +310,6 @@ class AttendancePageState extends State<AttendancePage> {
                                   markAllPresent = false;
                                   selectedStudents.remove(student);
                                 } else {
-                                  
                                   selectedStudents.add(student);
                                 }
                                 isSelected[index] = !isChecked;
@@ -367,6 +402,7 @@ class AttendancePageState extends State<AttendancePage> {
       }
     } catch (e) {
       print(e);
+      print("Failed to Marked Attendace");
       throw e;
     }
   }

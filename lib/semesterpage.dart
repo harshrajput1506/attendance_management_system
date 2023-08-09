@@ -18,6 +18,7 @@ class SemesterPageState extends State<SemesterPage> {
   late List<int> semesters = [];
   late List<String> subjects = [];
   late List<String> batchs = [];
+  late List<dynamic> classDetails = [];
   late List<Map<String, dynamic>> batches = [];
   String? _selectedSchool;
   String? _selectedStream;
@@ -619,20 +620,21 @@ class SemesterPageState extends State<SemesterPage> {
                                                       'Token not found');
                                                 }
 
-                                                final value =
+                                                classDetails =
                                                     await getBatchDetails();
-                                                print(value);
-                                                if (value[0] != null) {
+                                                
+                                                if (classDetails != null && classDetails.isNotEmpty) {
                                                   final jsonData = jsonEncode({
-                                                    'code': value[1],
                                                     'batchId':
-                                                        value[0].toString(),
+                                                        classDetails[0].toString(),
+                                                    'code': classDetails[1],
+
                                                     'timestamp':
                                                         getCurrentDateTimeFormatted()
                                                   });
                                                   // print(getSubjectCode(
                                                   //     _selectedSubject!));
-                                                  print(value);
+                                                  print(classDetails);
 
                                                   final url = Uri.parse(
                                                       'https://sdcusarattendance.onrender.com/api/v1/generatePID');
@@ -652,14 +654,17 @@ class SemesterPageState extends State<SemesterPage> {
                                                           200 ||
                                                       response.statusCode ==
                                                           201) {
-                                                    final responseData =
-                                                        jsonDecode(
-                                                                response.body)
-                                                            as Map<String,
-                                                                dynamic>;
+                                                    final responseData = [
+                                                      jsonDecode(response.body)
+                                                          as Map<String,
+                                                              dynamic>,
+                                                      classDetails
+                                                    ];
+
                                                     print(
                                                         'Response Data: $responseData');
-                                                        _navigateToAttendancePage(responseData, context);
+                                                    _navigateToAttendancePage(
+                                                        responseData, context);
                                                     // Process the response data as needed
                                                     // Navigator.push(
                                                     //   context,
@@ -747,16 +752,37 @@ class SemesterPageState extends State<SemesterPage> {
 
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
+        print(jsonResponse);
 
         if (jsonResponse['success'] == true) {
           final data = jsonResponse['data'];
           final batches = data['batches'] as List<dynamic>;
 
           if (batches.isNotEmpty) {
-            final batch = batches.first;
-            final batchId = batch['batch_id'] as int;
-            final subjCode = batch['subject_code'];
-            final data = [batchId, subjCode];
+            dynamic data;
+
+            for (final batch in batches) {
+              if (batch["stream"] == _selectedStream &&
+                  batch["semester"] == _selectedSemester &&
+                  batch["batch"] == _selectedBatch) {
+                final batchId = batch['batch_id'] as int;
+                final subjCode = batch['subject_code'];
+
+                data = [
+                  batchId,
+                  subjCode,
+                  _selectedSemester,
+                  _selectedStream,
+                  _selectedBatch,
+                  batch["subject_name"],
+                  batch["course"]
+                ];
+                break;
+              } else {
+                print('No class found');
+              }
+            }
+
             print(data);
             return data;
           }
@@ -782,8 +808,8 @@ String getCurrentDateTimeFormatted() {
   return formattedDate;
 }
 
-
-void _navigateToAttendancePage(Map<String, dynamic> responseData, BuildContext context) {
+void _navigateToAttendancePage(
+    List<dynamic> responseData, BuildContext context) {
   Navigator.push(
     context,
     MaterialPageRoute(
