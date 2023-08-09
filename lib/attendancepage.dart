@@ -7,7 +7,7 @@ import 'token_manager.dart';
 
 class AttendanceModel {
   final String name;
-  final String enrollmentNo;
+  final int enrollmentNo;
 
   AttendanceModel({
     required this.name,
@@ -17,7 +17,7 @@ class AttendanceModel {
   factory AttendanceModel.fromJson(Map<String, dynamic> json) {
     return AttendanceModel(
       name: json['name'] as String,
-      enrollmentNo: json['enrollment_no'] as String,
+      enrollmentNo: json['enrollment_no'] as int,
     );
   }
 
@@ -28,23 +28,26 @@ class AttendanceModel {
 }
 
 class AttendancePage extends StatefulWidget {
+  final responseData;
+  AttendancePage(this.responseData);
+
   @override
   State<StatefulWidget> createState() => AttendancePageState();
 }
 
 class AttendancePageState extends State<AttendancePage> {
   List<AttendanceModel> studentsList = [];
-  final tokenManager = TokenManager(); // Create an instance of TokenManager
-  String courseName = ''; // Add a variable to store the course name
-  String stream = ''; // Add a variable to store the stream
-  List<bool> isSelected = []; // Add a list to track the selection status of each student
-  List<AttendanceModel> selectedStudents = []; 
-  bool _isMounted = false; 
+  final tokenManager = TokenManager();
+  String courseName = '';
+  String stream = '';
+  List<bool> isSelected = [];
+  List<AttendanceModel> selectedStudents = [];
+  bool _isMounted = false;
+  bool markAllPresent = false;
 
   Future<String> getCourseName() async {
     try {
-      final token = await tokenManager
-          .getToken(); // Retrieve the token using TokenManager
+      final token = await tokenManager.getToken();
       if (token == null) {
         throw Exception('Token not found');
       }
@@ -64,13 +67,12 @@ class AttendancePageState extends State<AttendancePage> {
         final data = responseData['data'] as Map<String, dynamic>;
         final batches = data['batches'] as List<dynamic>;
         final subjectName = batches[0]['subject_name'] as String;
-        final stream = batches[0]['stream'] as String; // Fetch the stream
+        final stream = batches[0]['stream'] as String;
         setState(() {
           courseName = subjectName;
-          this.stream =
-              stream; // Assign the fetched stream to the stream variable
+          this.stream = stream;
         });
-        return subjectName; // Return the course name
+        return subjectName;
       } else {
         throw Exception('Failed to fetch subject name');
       }
@@ -83,9 +85,9 @@ class AttendancePageState extends State<AttendancePage> {
   @override
   void initState() {
     super.initState();
-     _isMounted = true; // Set the mounted state to true
+    _isMounted = true;
     getCourseName().then((name) {
-      if (_isMounted) { // Check if the widget is still mounted before calling setState
+      if (_isMounted) {
         setState(() {
           courseName = name;
         });
@@ -93,26 +95,35 @@ class AttendancePageState extends State<AttendancePage> {
     }).catchError((error) {
       print('Error fetching course name: $error');
     });
+
+    getStudentsDataApi("23", "4").then((students) {
+      if (_isMounted) {
+        setState(() {
+          studentsList = students;
+          isSelected = List.generate(studentsList.length, (_) => false);
+        });
+      }
+    }).catchError((error) {
+      print('Error fetching students data: $error');
+    });
   }
 
   @override
   void dispose() {
-    _isMounted = false; // Set the mounted state to false when disposing the widget
+    _isMounted = false;
     super.dispose();
   }
 
   Future<List<AttendanceModel>> getStudentsDataApi(
-      String batchId, String semster) async {
+      String batchId, String semester) async {
     try {
-      final token = await tokenManager
-          .getToken(); // Retrieve the token using TokenManager
+      final token = await tokenManager.getToken();
       if (token == null) {
         throw Exception('Token not found');
       }
 
       final headers = {
-        'Authorization':
-            token, // Include the token in the Authorization header as a token
+        'Authorization': token,
         'Content-Type': 'application/json',
       };
 
@@ -121,7 +132,7 @@ class AttendancePageState extends State<AttendancePage> {
 
       final body = {
         'batchId': batchId,
-        'semster': semster,
+        'semster': semester,
       };
 
       final response =
@@ -135,7 +146,7 @@ class AttendancePageState extends State<AttendancePage> {
           studentsList =
               students.map((json) => AttendanceModel.fromJson(json)).toList();
           setState(() {
-            isSelected = List.generate(studentsList.length, (index) => false);
+            isSelected = List.generate(studentsList.length, (_) => false);
           });
           return studentsList;
         } else {
@@ -170,7 +181,7 @@ class AttendancePageState extends State<AttendancePage> {
                         Text(
                           courseName,
                           style: TextStyle(
-                            fontSize: 27,
+                            fontSize: 18,
                             fontFamily: "Poppins",
                             fontWeight: FontWeight.w600,
                           ),
@@ -178,9 +189,9 @@ class AttendancePageState extends State<AttendancePage> {
                         ),
                         SizedBox(height: 10),
                         Text(
-                          stream, // Add the stream variable here
+                          stream,
                           style: TextStyle(
-                            fontSize: 25,
+                            fontSize: 1,
                             fontFamily: "Poppins",
                             fontWeight: FontWeight.w600,
                           ),
@@ -190,64 +201,94 @@ class AttendancePageState extends State<AttendancePage> {
                     ),
                   ),
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      "Mark all as Present",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(
+                      width: 60,
+                    ),
+                    Switch(
+                      value: markAllPresent,
+                      activeColor: Color.fromRGBO(4, 29, 83, 1),
+                      onChanged: (newValue) {
+                        setState(() {
+                          markAllPresent = newValue;
+                          if (markAllPresent) {
+                            selectedStudents = List.from(studentsList);
+                          } else {
+                            selectedStudents.clear();
+                          }
+
+                          // Update the checkbox state based on the switch state
+                          isSelected = List.generate(
+                            studentsList.length,
+                            (index) =>
+                                markAllPresent ||
+                                selectedStudents.contains(studentsList[index]),
+                          );
+                          if (!isSelected.every((value) => value) ||
+                              selectedStudents.isEmpty) {
+                            markAllPresent = false;
+                          }
+                        });
+                      },
+                    ),
+                  ],
+                ),
                 Container(
                   child: Expanded(
-                    child: FutureBuilder<List<AttendanceModel>>(
-                      future: getStudentsDataApi("23", "4"),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData && snapshot.data != null) {
-                          return ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: snapshot.data!.length,
-                            itemBuilder: (context, index) {
-                              final student = snapshot.data![index];
-                              return ListTile(
-                                leading: CircleAvatar(
-                                  backgroundColor: Color.fromRGBO(4, 29, 83, 1),
-                                  child: Icon(
-                                    Icons.person_outline_outlined,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                title: Text(student.name),
-                                subtitle: Text(student.enrollmentNo),
-                                trailing: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      final isSelected =
-                                          !selectedStudents.contains(student);
-                                      if (isSelected) {
-                                        selectedStudents.add(
-                                            student); // Add the student to the selected students list
-                                      } else {
-                                        selectedStudents.remove(
-                                            student); // Remove the student from the selected students list
-                                      }
-                                      print(
-                                          'Selected Students: $selectedStudents');
-                                    });
-                                  },
-                                  child: Icon(
-                                    selectedStudents.contains(student)
-                                        ? Icons.check_circle
-                                        : Icons.circle,
-                                    color: selectedStudents.contains(student)
-                                        ? Color.fromRGBO(4, 29, 83, 1)
-                                        : Colors.grey,
-                                  ),
-                                ),
-                              );
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: studentsList.length,
+                      itemBuilder: (context, index) {
+                        final student = studentsList[index];
+                        final bool isChecked = isSelected[index];
+
+                        return ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor:
+                                isChecked ? Colors.green.shade900 : Colors.red,
+                            child: Icon(
+                              Icons.person_outline_outlined,
+                              color: Colors.white,
+                            ),
+                          ),
+                          title: Text(
+                            student.name,
+                            style: TextStyle(
+                              color: isChecked
+                                  ? Colors.green.shade900
+                                  : Colors.red,
+                            ),
+                          ),
+                          subtitle: Text(student.enrollmentNo.toString()),
+                          trailing: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                if (isChecked) {
+                                  markAllPresent = false;
+                                  selectedStudents.remove(student);
+                                } else {
+                                  
+                                  selectedStudents.add(student);
+                                }
+                                isSelected[index] = !isChecked;
+                                print('Selected Students: $selectedStudents');
+                              });
                             },
-                          );
-                        } else if (snapshot.hasError) {
-                          return AlertDialog(
-                            title: Text('Welcome'),
-                            content: Text('${snapshot.error}'),
-                            actions: [],
-                          );
-                        }
-                        return Center(
-                          child: CircularProgressIndicator(),
+                            child: Icon(
+                              isChecked ? Icons.check_circle : Icons.circle,
+                              color: isChecked
+                                  ? Colors.green.shade900
+                                  : Colors.grey,
+                              size: 40,
+                            ),
+                          ),
                         );
                       },
                     ),
@@ -270,8 +311,7 @@ class AttendancePageState extends State<AttendancePage> {
                       ),
                     ),
                     onSubmit: () {
-                      markAttendance(
-                          selectedStudents); // Call the function to mark attendance
+                      markAttendance(selectedStudents, widget.responseData);
                     },
                   ),
                 ),
@@ -284,48 +324,56 @@ class AttendancePageState extends State<AttendancePage> {
     );
   }
 
-  Future<void> markAttendance(List<AttendanceModel> selectedStudents) async {
-  try {
-    final token = await tokenManager.getToken(); // Retrieve the token using TokenManager
-    if (token == null) {
-      throw Exception('Token not found');
+  Future<void> markAttendance(
+      List<AttendanceModel> selectedStudents, final resposeData) async {
+    try {
+      final token = await tokenManager.getToken();
+      if (token == null) {
+        throw Exception('Token not found');
+      }
+
+      final headers = {
+        'Authorization': token,
+        'Content-Type': 'application/json',
+      };
+
+      final url = Uri.parse(
+          'https://sdcusarattendance.onrender.com/api/v1/markingattendance');
+
+      final List<Map<String, dynamic>> attendanceList = selectedStudents
+          .map((student) => {
+                'enrollment_no': student.enrollmentNo,
+                'attendancestatus': 1,
+              })
+          .toList();
+
+      final body = {
+        'data': attendanceList,
+        'period_id': resposeData["period_id"]
+      };
+
+      final response =
+          await http.post(url, headers: headers, body: jsonEncode(body));
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+        // Process the response if needed
+        print('Attendance marked successfully');
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => SubmitPage()));
+      } else {
+        throw Exception(
+            'Failed to mark attendance. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print(e);
+      throw e;
     }
-
-    final headers = {
-      'Authorization': token,
-      'Content-Type': 'application/json',
-    };
-
-    final url = Uri.parse('https://sdcusarattendance.onrender.com/api/v1/markingattendance');
-
-    final List<Map<String, dynamic>> attendanceList = selectedStudents
-        .map((student) => {
-              'enrollment_no': student.enrollmentNo,
-              'attendancestatus': 1,
-            })
-        .toList();
-
-    final body = {
-      'data': attendanceList,
-    };
-
-    final response =
-        await http.post(url, headers: headers, body: jsonEncode(body));
-
-    if (response.statusCode == 200) {
-      final responseData = jsonDecode(response.body) as Map<String, dynamic>;
-      // Process the response if needed
-      print('Attendance marked successfully');
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => SubmitPage()));
-    } else {
-      throw Exception(
-          'Failed to mark attendance. Status code: ${response.statusCode}');
-    }
-  } catch (e) {
-    print(e);
-    throw e;
   }
 }
 
-}
+// void main()  {
+//   runApp(MaterialApp(
+//     home: AttendancePage(),
+//   ));
+// }

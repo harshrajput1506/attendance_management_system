@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'attendancepage.dart';
 import 'loginpage.dart';
+import 'package:intl/intl.dart';
 import 'token_manager.dart';
 
 class SemesterPage extends StatefulWidget {
@@ -14,14 +15,17 @@ class SemesterPage extends StatefulWidget {
 class SemesterPageState extends State<SemesterPage> {
   late List<String> schools = [];
   late List<String> streams = [];
-  late List<String> semesters = [];
+  late List<int> semesters = [];
   late List<String> subjects = [];
+  late List<String> batchs = [];
   late List<Map<String, dynamic>> batches = [];
   String? _selectedSchool;
   String? _selectedStream;
-  String? _selectedSemester;
+  int? _selectedSemester;
   String? _selectedSubject;
   String? _selectedBatchID;
+  String? _selectedBatch;
+
   bool _isLoading = false;
   late String name = '';
   final storage = FlutterSecureStorage(); // Initialize storage
@@ -31,7 +35,8 @@ class SemesterPageState extends State<SemesterPage> {
       _selectedSchool != null &&
       _selectedStream != null &&
       _selectedSemester != null &&
-      _selectedSubject != null;
+      _selectedSubject != null &&
+      _selectedBatch != null;
 
   Future<void> fetchData(BuildContext context) async {
     try {
@@ -49,19 +54,29 @@ class SemesterPageState extends State<SemesterPage> {
               token, // Include the token in the Authorization header
         },
       );
+
       print('Token : ${token}');
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
+        print(jsonData['data']['user']);
+        print(jsonData['data']['school']);
+        print(jsonData['data']['user']);
+        print(jsonData['data']['batches']);
+        print('batches'.runtimeType);
+        List<dynamic> batchesInfo =
+            List<dynamic>.from(jsonData['data']['batches']);
+        print(batchesInfo.runtimeType);
         setState(() {
-          name = jsonData['data']['name'];
+          name = jsonData['data']['user'];
           _selectedSchool =
               jsonData['data'] != null && jsonData['data']['school'] != null
                   ? jsonData['data']['school'].toString()
                   : null;
           List<dynamic> batchesData =
               jsonData['data'] != null && jsonData['data']['batches'] != null
-                  ? jsonData['data']['batches']
+                  ? batchesInfo
                   : [];
+
           updateStateWithBatches(batchesData);
         });
       } else {
@@ -107,18 +122,22 @@ class SemesterPageState extends State<SemesterPage> {
   void updateStateWithBatches(List<dynamic> batchesData) {
     Set<String> uniqueSchools = Set<String>();
     Set<String> uniqueStreams = Set<String>();
-    Set<String> uniqueSemesters = Set<String>();
+    Set<int> uniqueSemesters = Set<int>();
     Set<String> uniqueSubjects = Set<String>();
+    Set<String> uniqueBatch = Set<String>();
     List<Map<String, dynamic>> batchesList = [];
     for (var batch in batchesData) {
-      if (batch['school'] != null && batch['school'] != _selectedSchool) {
-        uniqueSchools.add(batch['school']);
-      }
+      // if (batch['school'] != null && batch['school'] != _selectedSchool) {
+      //   uniqueSchools.add(batch['school']);
+      // }
       if (batch['stream'] != null && batch['stream'] != _selectedStream) {
         uniqueStreams.add(batch['stream']);
       }
       if (batch['semester'] != null && batch['semester'] != _selectedSemester) {
         uniqueSemesters.add(batch['semester']);
+      }
+      if (batch['batch'] != null && batch['batch'] != _selectedBatch) {
+        uniqueBatch.add(batch['batch']);
       }
       if (batch['subject_name'] != null &&
           batch['subject_name'] != _selectedSubject) {
@@ -130,6 +149,7 @@ class SemesterPageState extends State<SemesterPage> {
     streams = uniqueStreams.toList();
     semesters = uniqueSemesters.toList();
     subjects = uniqueSubjects.toList();
+    batchs = uniqueBatch.toList();
     batches = batchesList;
     if (_selectedSchool != null && !schools.contains(_selectedSchool!)) {
       schools.add(_selectedSchool!);
@@ -139,6 +159,9 @@ class SemesterPageState extends State<SemesterPage> {
     }
     if (_selectedSemester != null && !semesters.contains(_selectedSemester!)) {
       semesters.add(_selectedSemester!);
+    }
+    if (_selectedBatch != null && !batchs.contains(_selectedBatch!)) {
+      batchs.add(_selectedBatch!);
     }
     if (_selectedSubject != null && !subjects.contains(_selectedSubject!)) {
       subjects.add(_selectedSubject!);
@@ -291,6 +314,7 @@ class SemesterPageState extends State<SemesterPage> {
                                                     null; // Reset selected stream
                                                 _selectedSemester =
                                                     null; // Reset selected semester
+                                                _selectedBatch = null;
                                                 _selectedSubject =
                                                     null; // Reset selected subject
                                               });
@@ -381,7 +405,7 @@ class SemesterPageState extends State<SemesterPage> {
                                     child: _selectedSchool == null
                                         ? null
                                         : Container(
-                                            child: DropdownButton<String>(
+                                            child: DropdownButton<int>(
                                               borderRadius:
                                                   BorderRadius.circular(5),
                                               isExpanded: true,
@@ -389,11 +413,12 @@ class SemesterPageState extends State<SemesterPage> {
                                               value: _selectedSemester,
                                               underline: SizedBox(),
                                               items: semesters.map((semester) {
-                                                return DropdownMenuItem<String>(
+                                                return DropdownMenuItem<int>(
                                                   value: semester,
                                                   child: Center(
                                                     child: Text(
-                                                      semester,
+                                                      semester?.toString() ??
+                                                          '',
                                                       style: TextStyle(
                                                         fontSize: 18,
                                                         color: Colors.white,
@@ -411,6 +436,63 @@ class SemesterPageState extends State<SemesterPage> {
                                                   ? Center(
                                                       child: Text(
                                                         'Select Semester',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 18,
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : null,
+                                              dropdownColor:
+                                                  Color.fromRGBO(0, 70, 121, 1),
+                                            ),
+                                          ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(2.0),
+                                  child: Container(
+                                    margin: EdgeInsets.all(10.0),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Color.fromRGBO(4, 29, 83, 1),
+                                    ),
+                                    width: 320,
+                                    alignment: Alignment.center,
+                                    child: _selectedSchool == null
+                                        ? null
+                                        : Container(
+                                            child: DropdownButton<String>(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              isExpanded: true,
+                                              iconEnabledColor: Colors.white,
+                                              underline: SizedBox(),
+                                              value: _selectedBatch,
+                                              items: batchs.map((batch) {
+                                                return DropdownMenuItem<String>(
+                                                  value: batch,
+                                                  child: Center(
+                                                    child: Text(
+                                                      batch,
+                                                      style: TextStyle(
+                                                        fontSize: 18,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              }).toList(),
+                                              onChanged: (newValue) {
+                                                setState(() {
+                                                  _selectedBatch = newValue;
+                                                  _selectedSubject = null;
+                                                });
+                                              },
+                                              hint: _selectedBatch == null
+                                                  ? Center(
+                                                      child: Text(
+                                                        'Select Batch',
                                                         style: TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 18,
@@ -515,7 +597,8 @@ class SemesterPageState extends State<SemesterPage> {
                                                           Color>(Colors.white),
                                                 ),
                                               ),
-                                            ): Text(
+                                            )
+                                          : Text(
                                               "Continue",
                                               style: TextStyle(
                                                 fontSize: 22,
@@ -536,17 +619,20 @@ class SemesterPageState extends State<SemesterPage> {
                                                       'Token not found');
                                                 }
 
-                                                final batchIdValue =
-                                                    await getBatchId();
-                                                if (batchIdValue != null) {
+                                                final value =
+                                                    await getBatchDetails();
+                                                print(value);
+                                                if (value[0] != null) {
                                                   final jsonData = jsonEncode({
-                                                    'code': getSubjectCode(
-                                                        _selectedSubject!),
-                                                    'batchId': batchIdValue,
+                                                    'code': value[1],
+                                                    'batchId':
+                                                        value[0].toString(),
+                                                    'timestamp':
+                                                        getCurrentDateTimeFormatted()
                                                   });
-                                                  print(getSubjectCode(
-                                                      _selectedSubject!));
-                                                  print(batchIdValue);
+                                                  // print(getSubjectCode(
+                                                  //     _selectedSubject!));
+                                                  print(value);
 
                                                   final url = Uri.parse(
                                                       'https://sdcusarattendance.onrender.com/api/v1/generatePID');
@@ -573,13 +659,14 @@ class SemesterPageState extends State<SemesterPage> {
                                                                 dynamic>;
                                                     print(
                                                         'Response Data: $responseData');
+                                                        _navigateToAttendancePage(responseData, context);
                                                     // Process the response data as needed
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              AttendancePage()),
-                                                    );
+                                                    // Navigator.push(
+                                                    //   context,
+                                                    //   MaterialPageRoute(
+                                                    //       builder: (context) =>
+                                                    //           AttendancePage()),
+                                                    // );
                                                   } else {
                                                     print(
                                                         'Response Status Code: ${response.statusCode}');
@@ -641,7 +728,7 @@ class SemesterPageState extends State<SemesterPage> {
     );
   }
 
-  Future<String?> getBatchId() async {
+  Future<dynamic> getBatchDetails() async {
     final url =
         Uri.parse('https://sdcusarattendance.onrender.com/api/v1/getClasses');
 
@@ -667,8 +754,11 @@ class SemesterPageState extends State<SemesterPage> {
 
           if (batches.isNotEmpty) {
             final batch = batches.first;
-            final batchId = batch['batch_id'] as String;
-            return batchId;
+            final batchId = batch['batch_id'] as int;
+            final subjCode = batch['subject_code'];
+            final data = [batchId, subjCode];
+            print(data);
+            return data;
           }
         } else {
           print('API request failed: ${jsonResponse['message']}');
@@ -679,8 +769,25 @@ class SemesterPageState extends State<SemesterPage> {
 
       return null; // Return null if the API response is invalid or no batch ID found
     } catch (e) {
-      print('Exception in getBatchId(): $e');
+      print('Exception in getBatchDetails(): $e');
       return null; // Return null in case of any exception
     }
   }
+}
+
+String getCurrentDateTimeFormatted() {
+  DateTime now = DateTime.now();
+  String formattedDate = DateFormat('MM/dd/yyyy h:mm:ss a').format(now);
+  print(formattedDate);
+  return formattedDate;
+}
+
+
+void _navigateToAttendancePage(Map<String, dynamic> responseData, BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => AttendancePage(responseData),
+    ),
+  );
 }
