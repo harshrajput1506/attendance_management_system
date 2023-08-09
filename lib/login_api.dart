@@ -5,7 +5,7 @@ import 'semesterpage.dart';
 import 'token_manager.dart';
 
 Future<void> login(BuildContext context, String instructorId, String password) async {
-  final url = Uri.parse('https://sdcusarattendance.onrender.com/api/v1/loginApp');
+  final url = Uri.parse('https://sdcusarattendance.onrender.com/api/v1/Loginapp');
   final tokenManager = TokenManager(); // create an instance of TokenManager
 
   try {

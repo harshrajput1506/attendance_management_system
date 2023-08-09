@@ -141,11 +141,21 @@ class SemesterPageState extends State<SemesterPage> {
         uniqueBatch.add(batch['batch']);
       }
       if (batch['subject_name'] != null &&
-          batch['subject_name'] != _selectedSubject) {
+          batch['subject_name'] != _selectedSubject 
+          ) {
         uniqueSubjects.add(batch['subject_name']);
       }
+      // for (final batch in batches) {
+    //   if (batch["stream"] == _selectedStream &&
+    //       batch["semester"] == _selectedSemester &&
+    //       batch["batch"] == _selectedBatch) {
+    //         subjects = uniqueSubjects.toList();
+    //       }
+    // }
       batchesList.add(batch);
     }
+    
+
     schools = uniqueSchools.toList();
     streams = uniqueStreams.toList();
     semesters = uniqueSemesters.toList();
@@ -373,7 +383,9 @@ class SemesterPageState extends State<SemesterPage> {
                                               onChanged: (newValue) {
                                                 setState(() {
                                                   _selectedStream = newValue;
+                                                  _selectedBatch = null;
                                                   _selectedSemester = null;
+                                                  _selectedSubject = null;
                                                 });
                                               },
                                               hint: _selectedStream == null
@@ -418,8 +430,7 @@ class SemesterPageState extends State<SemesterPage> {
                                                   value: semester,
                                                   child: Center(
                                                     child: Text(
-                                                      semester?.toString() ??
-                                                          '',
+                                                      semester.toString(),
                                                       style: TextStyle(
                                                         fontSize: 18,
                                                         color: Colors.white,
@@ -431,6 +442,8 @@ class SemesterPageState extends State<SemesterPage> {
                                               onChanged: (newValue) {
                                                 setState(() {
                                                   _selectedSemester = newValue;
+                                                  _selectedBatch = null;
+                                                  _selectedSubject = null;
                                                 });
                                               },
                                               hint: _selectedSemester == null
@@ -619,26 +632,26 @@ class SemesterPageState extends State<SemesterPage> {
                                                   throw Exception(
                                                       'Token not found');
                                                 }
-
+          
                                                 classDetails =
                                                     await getBatchDetails();
-                                                
-                                                if (classDetails != null && classDetails.isNotEmpty) {
+          
+                                                if (classDetails != null &&
+                                                    classDetails.isNotEmpty) {
                                                   final jsonData = jsonEncode({
-                                                    'batchId':
-                                                        classDetails[0].toString(),
+                                                    'batchId': classDetails[0]
+                                                        .toString(),
                                                     'code': classDetails[1],
-
                                                     'timestamp':
                                                         getCurrentDateTimeFormatted()
                                                   });
                                                   // print(getSubjectCode(
                                                   //     _selectedSubject!));
                                                   print(classDetails);
-
+          
                                                   final url = Uri.parse(
                                                       'https://sdcusarattendance.onrender.com/api/v1/generatePID');
-
+          
                                                   final response =
                                                       await http.post(
                                                     url,
@@ -649,7 +662,7 @@ class SemesterPageState extends State<SemesterPage> {
                                                     },
                                                     body: jsonData,
                                                   );
-
+          
                                                   if (response.statusCode ==
                                                           200 ||
                                                       response.statusCode ==
@@ -660,7 +673,7 @@ class SemesterPageState extends State<SemesterPage> {
                                                               dynamic>,
                                                       classDetails
                                                     ];
-
+          
                                                     print(
                                                         'Response Data: $responseData');
                                                     _navigateToAttendancePage(

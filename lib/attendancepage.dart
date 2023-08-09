@@ -45,58 +45,11 @@ class AttendancePageState extends State<AttendancePage> {
   bool _isMounted = false;
   bool markAllPresent = false;
 
-  // Future<String> getCourseName() async {
-  //   try {
-  //     final token = await tokenManager.getToken();
-  //     if (token == null) {
-  //       throw Exception('Token not found');
-  //     }
-
-  //     final headers = {
-  //       'Authorization': token,
-  //       'Content-Type': 'application/json',
-  //     };
-
-  //     final url =
-  //         Uri.parse('https://sdcusarattendance.onrender.com/api/v1/getClasses');
-
-  //     final response = await http.get(url, headers: headers);
-
-  //     if (response.statusCode == 200) {
-  //       final responseData = jsonDecode(response.body) as Map<String, dynamic>;
-  //       final data = responseData['data'] as Map<String, dynamic>;
-  //       final batches = data['batches'] as List<dynamic>;
-  //       final subjectName = batches[0]['subject_name'] as String;
-  //       final stream = batches[0]['stream'] as String;
-  //       setState(() {
-  //         courseName = subjectName;
-  //         this.stream = stream;
-  //       });
-  //       return subjectName;
-  //     } else {
-  //       throw Exception('Failed to fetch subject name');
-  //     }
-  //   } catch (e) {
-  //     print(e);
-  //     throw e;
-  //   }
-  // }
-
   @override
   void initState() {
     print(widget.responseData);
     super.initState();
     _isMounted = true;
-
-    // getCourseName().then((name) {
-    //   if (_isMounted) {
-    //     setState(() {
-    //       courseName = name;
-    //     });
-    //   }
-    // }).catchError((error) {
-    //   print('Error fetching course name: $error');
-    // });
 
     getStudentsDataApi(widget.responseData[1][0], widget.responseData[1][2])
         .then((students) {
@@ -190,27 +143,32 @@ class AttendancePageState extends State<AttendancePage> {
                         //   ),
                         //   textAlign: TextAlign.center,
                         // ),
-                        Row(
-                          children: [
-                            Text(
-                              widget.responseData[1][3],
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontFamily: "Poppins",
-                                fontWeight: FontWeight.w600,
+                        Padding(
+                          padding:
+                              const EdgeInsets.only(left: 10.0, right: 5.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                widget.responseData[1][3],
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontFamily: "Poppins",
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                textAlign: TextAlign.center,
                               ),
-                              textAlign: TextAlign.center,
-                            ),
-                            Text(
-                              widget.responseData[1][4],
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontFamily: "Poppins",
-                                fontWeight: FontWeight.w600,
+                              Text(
+                                widget.responseData[1][4],
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontFamily: "Poppins",
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                textAlign: TextAlign.center,
                               ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                         SizedBox(height: 5),
                         Text(
@@ -250,29 +208,26 @@ class AttendancePageState extends State<AttendancePage> {
                     Switch(
                       value: markAllPresent,
                       activeColor: Color.fromRGBO(4, 29, 83, 1),
+                      inactiveThumbColor: Colors.grey,
                       onChanged: (newValue) {
                         setState(() {
                           markAllPresent = newValue;
+
                           if (markAllPresent) {
                             selectedStudents = List.from(studentsList);
                           } else {
                             selectedStudents.clear();
                           }
 
-                          // Update the checkbox state based on the switch state
                           isSelected = List.generate(
                             studentsList.length,
                             (index) =>
                                 markAllPresent ||
                                 selectedStudents.contains(studentsList[index]),
                           );
-                          if (!isSelected.every((value) => value) ||
-                              selectedStudents.isEmpty) {
-                            markAllPresent = false;
-                          }
                         });
                       },
-                    ),
+                    )
                   ],
                 ),
                 Container(
@@ -284,44 +239,54 @@ class AttendancePageState extends State<AttendancePage> {
                         final student = studentsList[index];
                         final bool isChecked = isSelected[index];
                         print(index);
-
-                        return ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor:
-                                isChecked ? Colors.green.shade900 : Colors.red,
-                            child: Icon(
-                              Icons.person_outline_outlined,
-                              color: Colors.white,
-                            ),
-                          ),
-                          title: Text(
-                            student.name,
-                            style: TextStyle(
-                              color: isChecked
+                        return Card(
+                          shadowColor: Colors.blue,
+                          
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: isChecked
                                   ? Colors.green.shade900
                                   : Colors.red,
+                              child: Icon(
+                                Icons.person_outline_outlined,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                          subtitle: Text(student.enrollmentNo.toString()),
-                          trailing: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                if (isChecked) {
-                                  markAllPresent = false;
-                                  selectedStudents.remove(student);
-                                } else {
-                                  selectedStudents.add(student);
-                                }
-                                isSelected[index] = !isChecked;
-                                print('Selected Students: $selectedStudents');
-                              });
-                            },
-                            child: Icon(
-                              isChecked ? Icons.check_circle : Icons.circle,
-                              color: isChecked
-                                  ? Colors.green.shade900
-                                  : Colors.grey,
-                              size: 40,
+                            title: Text(
+                              student.name,
+                              style: TextStyle(
+                                color: isChecked
+                                    ? Colors.green.shade900
+                                    : Colors.red,
+                              ),
+                            ),
+                            subtitle: Text(student.enrollmentNo.toString()),
+                            trailing: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  final isChecked = isSelected[index];
+
+                                  if (isChecked) {
+                                    selectedStudents.remove(student);
+                                  } else {
+                                    selectedStudents.add(student);
+                                  }
+
+                                  isSelected[index] = !isChecked;
+                                  markAllPresent =
+                                      isSelected.every((value) => value) &&
+                                          selectedStudents.isNotEmpty;
+                                });
+                              },
+                              child: Icon(
+                                isSelected[index]
+                                    ? Icons.check_circle
+                                    : Icons.circle,
+                                color: isSelected[index]
+                                    ? Colors.green.shade900
+                                    : Colors.grey,
+                                size: 40,
+                              ),
                             ),
                           ),
                         );
@@ -360,51 +325,51 @@ class AttendancePageState extends State<AttendancePage> {
   }
 
   Future<void> markAttendance(
-      List<AttendanceModel> selectedStudents, final resposeData) async {
-    try {
-      final token = await tokenManager.getToken();
-      if (token == null) {
-        throw Exception('Token not found');
-      }
-
-      final headers = {
-        'Authorization': token,
-        'Content-Type': 'application/json',
-      };
-
-      final url = Uri.parse(
-          'https://sdcusarattendance.onrender.com/api/v1/markingattendance');
-
-      final List<Map<String, dynamic>> attendanceList = selectedStudents
-          .map((student) => {
-                'enrollment_no': student.enrollmentNo,
-                'attendancestatus': 1,
-              })
-          .toList();
-
-      final body = {
-        'data': attendanceList,
-        'period_id': resposeData["period_id"]
-      };
-
-      final response =
-          await http.post(url, headers: headers, body: jsonEncode(body));
-
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body) as Map<String, dynamic>;
-        // Process the response if needed
-        print('Attendance marked successfully');
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => SubmitPage()));
-      } else {
-        throw Exception(
-            'Failed to mark attendance. Status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      print(e);
-      print("Failed to Marked Attendace");
-      throw e;
+      List<AttendanceModel> selectedStudents, dynamic resposeData) async {
+    // try {
+    final token = await tokenManager.getToken();
+    if (token == null) {
+      throw Exception('Token not found');
     }
+
+    final headers = {
+      'Authorization': token,
+      'Content-Type': 'application/json',
+    };
+
+    final url = Uri.parse(
+        'https://sdcusarattendance.onrender.com/api/v1/markingattendance');
+
+    final List<Map<String, dynamic>> attendanceList = selectedStudents
+        .map((student) => {
+              'enrollment_no': student.enrollmentNo,
+              'attendancestatus': 1,
+            })
+        .toList();
+    // print(attendanceList);
+    Map<String, dynamic> Mydata = {
+      'data': attendanceList,
+      'period_id': resposeData[0]["period_id"]
+    };
+    final jsonData = jsonEncode(Mydata);
+    print(jsonData);
+    final response = await http.post(url, headers: headers, body: jsonData);
+
+    if (response.statusCode == 200) {
+      // final result = jsonDecode(response.body) as Map<String, dynamic>;
+      // Process the response if needed
+      print('Attendance marked successfully');
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => SubmitPage()));
+    } else {
+      throw Exception(
+          'Failed to mark attendance. Status code: ${response.statusCode}');
+    }
+    // } catch (e) {
+    //   print(e);
+    //   print("Failed to Marked Attendace");
+    //   throw e;
+    // }
   }
 }
 

@@ -82,7 +82,7 @@ class SubmitPageState extends State<SubmitPage> {
         height: 100,
         color: Color.fromRGBO(0, 70, 121, 1),
         child: Center(
-          child: Text('For any queries, mail us at sdc.usict@gmail.com',style: TextStyle(color: Colors.white),),
+          child: Text('For any queries, mail us at sdc.usar@gmail.com',style: TextStyle(color: Colors.white),),
         ),
       ),
     );
