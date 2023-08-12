@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'forget_pass_page.dart';
 import 'login_api.dart';
 import 'semesterpage.dart';
 
@@ -273,6 +274,26 @@ class _LoginScreenState extends State<LoginScreen> {
                                         );
                                       }
                                     },
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    // Add navigation logic to the Forget Password page here
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ForgetPasswordPage()
+                                            // ForgetPasswordPage()),
+                                            ));
+                                  },
+                                  child: Text(
+                                    "Forget Password",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors
+                                          .blue, // You can customize the color as needed
+                                    ),
                                   ),
                                 ),
                               ],

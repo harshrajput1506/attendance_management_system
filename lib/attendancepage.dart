@@ -181,15 +181,15 @@ class AttendancePageState extends State<AttendancePage> {
                           textAlign: TextAlign.center,
                         ),
                         SizedBox(height: 5),
-                        Text(
-                          widget.responseData[1][1],
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontFamily: "Poppins",
-                            fontWeight: FontWeight.w600,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
+                        // Text(
+                        //   // widget.responseData[1][1],
+                        //   style: TextStyle(
+                        //     fontSize: 18,
+                        //     fontFamily: "Poppins",
+                        //     fontWeight: FontWeight.w600,
+                        //   ),
+                        //   textAlign: TextAlign.center,
+                        // ),
                       ],
                     ),
                   ),
@@ -240,8 +240,9 @@ class AttendancePageState extends State<AttendancePage> {
                         final bool isChecked = isSelected[index];
                         print(index);
                         return Card(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)),
                           shadowColor: Colors.blue,
-                          
                           child: ListTile(
                             leading: CircleAvatar(
                               backgroundColor: isChecked
