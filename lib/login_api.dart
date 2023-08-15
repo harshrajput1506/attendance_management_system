@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'semesterpage.dart';
 import 'token_manager.dart';
 
-Future<void> login(BuildContext context, String instructorId, String password) async {
-  final url = Uri.parse('https://sdcusarattendance.onrender.com/api/v1/Loginapp');
+Future<void> login(
+    BuildContext context, String instructorId, String password) async {
+  final url =
+      Uri.parse('https://attendancesdcusar.onrender.com/api/v1/Loginapp');
   final tokenManager = TokenManager(); // create an instance of TokenManager
 
   try {
@@ -36,15 +38,15 @@ Future<void> login(BuildContext context, String instructorId, String password) a
         throw Exception('Failed to login: ${jsonResponse['message']}');
       }
     } else {
-      throw Exception('Failed to login: ${response.statusCode}');
+      throw Exception('Failed to login: ${response.statusCode}, ${response}');
     }
   } catch (e) {
     print(e);
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text('Login Error'),
-        content: Text('An error occurred while logging in.'),
+        title: Text('Incorrect Password'),
+        content: Text('If you don\'t remember the Password Please, Reset it'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

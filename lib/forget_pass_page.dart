@@ -1,7 +1,68 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'login_api.dart';
-import 'semesterpage.dart';
+// import 'login_api.dart';
+import 'loginpage.dart';
+// import 'semesterpage.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+Future<void> updatePassword(
+    String instructorId, String oldPassword, String newPassword) async {
+  var headers = {
+    'Content-Type': 'application/json',
+    'Cookie': 'token=YOUR_TOKEN_HERE', // Replace with your token
+  };
+
+  var requestBody = {
+    "instructor_id": instructorId,
+    "password": oldPassword,
+    "new_password": newPassword,
+  };
+
+  var uri =
+      Uri.parse('https://attendancesdcusar.onrender.com/api/v1/updatePassword');
+
+  var response =
+      await http.post(uri, headers: headers, body: jsonEncode(requestBody));
+
+  if (response.statusCode == 200) {
+    // print(await http.Response.fromStream(response).body);
+    print("Successful");
+    // Handle success, e.g., show a success message to the user
+  } else {
+    print(response.reasonPhrase);
+    // Handle error, e.g., show an error message to the user
+  }
+  ;
+  // var context;
+  // showDialog<void>(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: Text('Password Changed Successfully'),
+  //         content: SingleChildScrollView(
+  //           child: ListBody(
+  //             children: <Widget>[
+  //               Text('Your password has been updated successfully.'),
+  //               Text('You can now log in with your new password.'),
+  //             ],
+  //           ),
+  //         ),
+  //         actions: <Widget>[
+  //           TextButton(
+  //             child: Text('OK'),
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //               Navigator.of(context).pushReplacement(MaterialPageRoute(
+  //                 builder: (context) => LoginScreen(),
+  //               ));
+  //             },
+  //           ),
+  //         ],
+  //       );
+  //     });
+}
 
 class ForgetPasswordPage extends StatefulWidget {
   const ForgetPasswordPage({Key? key}) : super(key: key);
@@ -12,10 +73,43 @@ class ForgetPasswordPage extends StatefulWidget {
 
 class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final instructorIdController = TextEditingController();
+  // final instructorIdController = TextEditingController();
   final _streamController = StreamController<String>();
+  final TextEditingController instructorIdController = TextEditingController();
+  final TextEditingController oldPasswordController = TextEditingController();
+  final TextEditingController newPasswordController = TextEditingController();
 
   var instructor_id = "";
+  void showSuccessDialogAndNavigate() {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Password Changed Successfully'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Your password has been updated successfully.'),
+                Text('You can now log in with your new password.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (context) => LoginScreen(),
+                ));
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   void initState() {
@@ -76,7 +170,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                           "Guru Gobind Singh Indraprastha University",
                           style: TextStyle(
                             fontFamily: "Poppins",
-                            fontSize: 24,
+                            fontSize: 20,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -87,7 +181,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                           "East Delhi Campus",
                           style: TextStyle(
                             fontFamily: "Poppins",
-                            fontSize: 20,
+                            fontSize: 18,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -101,7 +195,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                                 "Reset Your Password",
                                 style: TextStyle(
                                   fontFamily: "Poppins",
-                                  fontSize: 24,
+                                  fontSize: 15,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -196,17 +290,17 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                                             ),
                                             alignment: Alignment.center,
                                             child: TextFormField(
-                                                cursorColor: Colors.black,
-                                                decoration: InputDecoration(
-                                                  icon: Icon(
-                                                    Icons.vpn_key,
-                                                  ),
-                                                  hintText: "Reset Password ",
-                                                  enabledBorder:
-                                                      InputBorder.none,
-                                                  focusedBorder:
-                                                      InputBorder.none,
-                                                ))),
+                                              cursorColor: Colors.black,
+                                              decoration: InputDecoration(
+                                                icon: Icon(
+                                                  Icons.vpn_key,
+                                                ),
+                                                hintText: "Old Password ",
+                                                enabledBorder: InputBorder.none,
+                                                focusedBorder: InputBorder.none,
+                                              ),
+                                              controller: oldPasswordController,
+                                            )),
                                         SizedBox(
                                           height: 5,
                                         ),
@@ -228,10 +322,11 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                                               icon: Icon(
                                                 Icons.vpn_key,
                                               ),
-                                              hintText: "Confirm Password",
+                                              hintText: "New Password",
                                               enabledBorder: InputBorder.none,
                                               focusedBorder: InputBorder.none,
                                             ),
+                                            controller: newPasswordController,
                                           ),
                                         ),
                                         Container(
@@ -256,6 +351,15 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                                                 ),
                                               ),
                                               onPressed: () async {
+                                                String instructorId =
+                                                    instructorIdController.text;
+                                                String oldPassword =
+                                                    oldPasswordController.text;
+                                                String newPassword =
+                                                    newPasswordController.text;
+                                                updatePassword(instructorId,
+                                                    oldPassword, newPassword);
+                                                showSuccessDialogAndNavigate();
                                                 if (_formKey.currentState!
                                                     .validate()) {
                                                   // Perform reset password logic here

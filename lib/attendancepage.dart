@@ -40,6 +40,7 @@ class AttendancePageState extends State<AttendancePage> {
   final tokenManager = TokenManager();
   String courseName = '';
   String stream = '';
+  String comment = '';
   List<bool> isSelected = [];
   List<AttendanceModel> selectedStudents = [];
   bool _isMounted = false;
@@ -84,7 +85,7 @@ class AttendancePageState extends State<AttendancePage> {
       };
 
       final url = Uri.parse(
-          'https://sdcusarattendance.onrender.com/api/v1/getStudents');
+          'https://attendancesdcusar.onrender.com/api/v1/getStudents');
 
       final body = {
         'batchId': batchId,
@@ -157,6 +158,9 @@ class AttendancePageState extends State<AttendancePage> {
                                   fontWeight: FontWeight.w600,
                                 ),
                                 textAlign: TextAlign.center,
+                              ),
+                              SizedBox(
+                                width: 10,
                               ),
                               Text(
                                 widget.responseData[1][4],
@@ -295,7 +299,7 @@ class AttendancePageState extends State<AttendancePage> {
                     ),
                   ),
                 ),
-                Padding(padding: EdgeInsets.all(15)),
+                Padding(padding: EdgeInsets.all(10)),
                 SizedBox(
                   height: 50,
                   width: 320,
@@ -312,11 +316,69 @@ class AttendancePageState extends State<AttendancePage> {
                       ),
                     ),
                     onSubmit: () {
-                      markAttendance(selectedStudents, widget.responseData);
+                      // markAttendance(selectedStudents, widget.responseData);
+                      int totalStudentsPresent = selectedStudents.length;
+                      int totalStudents = studentsList.length;
+
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          TextEditingController commentController =
+                              TextEditingController();
+
+                          return AlertDialog(
+                            title: Text('Info'),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Text(
+                                  'Total students present: $totalStudentsPresent'
+                                  "\n"
+                                  'Out of : $totalStudents',
+                                ),
+                                SizedBox(height: 20),
+                                TextField(
+                                  controller: commentController,
+                                  maxLength: 30,
+                                  decoration: InputDecoration(
+                                    labelText: 'Add a comment (max 30 words)',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  maxLines:
+                                      null, // Allow multiple lines of text
+                                ),
+                              ],
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text('Cancel',
+                                    style: TextStyle(
+                                        color: Color.fromRGBO(0, 70, 121, 1))),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              TextButton(
+                                child: Text(
+                                  'OK',
+                                  style: TextStyle(
+                                      color: Color.fromRGBO(0, 70, 121, 1)),
+                                ),
+                                onPressed: () {
+                                  comment = commentController.text;
+                                  markAttendance(
+                                      selectedStudents, widget.responseData);
+                                  // Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
                     },
                   ),
                 ),
-                Padding(padding: EdgeInsets.all(15)),
+                Padding(padding: EdgeInsets.all(15))
               ],
             ),
           ),
@@ -339,7 +401,7 @@ class AttendancePageState extends State<AttendancePage> {
     };
 
     final url = Uri.parse(
-        'https://sdcusarattendance.onrender.com/api/v1/markingattendance');
+        'https://attendancesdcusar.onrender.com/api/v1/markingattendance');
 
     final List<Map<String, dynamic>> attendanceList = selectedStudents
         .map((student) => {
@@ -350,7 +412,8 @@ class AttendancePageState extends State<AttendancePage> {
     // print(attendanceList);
     Map<String, dynamic> Mydata = {
       'data': attendanceList,
-      'period_id': resposeData[0]["period_id"]
+      'period_id': resposeData[0]["period_id"],
+      'comment': comment
     };
     final jsonData = jsonEncode(Mydata);
     print(jsonData);
@@ -366,16 +429,5 @@ class AttendancePageState extends State<AttendancePage> {
       throw Exception(
           'Failed to mark attendance. Status code: ${response.statusCode}');
     }
-    // } catch (e) {
-    //   print(e);
-    //   print("Failed to Marked Attendace");
-    //   throw e;
-    // }
   }
 }
-
-// void main()  {
-//   runApp(MaterialApp(
-//     home: AttendancePage(),
-//   ));
-// }

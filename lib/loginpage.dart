@@ -89,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         "Guru Gobind Singh Indraprastha University",
                         style: TextStyle(
                           fontFamily: "Poppins",
-                          fontSize: 24,
+                          fontSize: 20,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -100,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         "East Delhi Campus",
                         style: TextStyle(
                           fontFamily: "Poppins",
-                          fontSize: 20,
+                          fontSize: 18,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -122,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               children: <Widget>[
                                 Container(
                                   margin: EdgeInsets.only(
-                                      left: 20, right: 20, top: 100),
+                                      left: 20, right: 20, top: 80),
                                   padding: EdgeInsets.only(left: 20, right: 20),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(50),
@@ -178,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 Container(
                                   margin: EdgeInsets.only(
-                                      left: 20, right: 20, top: 30),
+                                      left: 20, right: 20, top: 20),
                                   padding: EdgeInsets.only(left: 20, right: 20),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(50),
@@ -275,6 +275,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                       }
                                     },
                                   ),
+                                ),
+                                SizedBox(
+                                  height: 20,
                                 ),
                                 TextButton(
                                   onPressed: () {

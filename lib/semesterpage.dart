@@ -19,7 +19,7 @@ class SemesterPageState extends State<SemesterPage> {
   late List<String> subjects = [];
   late List<String> batchs = [];
   late List<dynamic> classDetails = [];
-  late List<Map<String, dynamic>> batches = [];
+  late List<Map<String, dynamic>> batchData = [];
   String? _selectedSchool;
   String? _selectedStream;
   int? _selectedSemester;
@@ -49,7 +49,7 @@ class SemesterPageState extends State<SemesterPage> {
       }
 
       final response = await http.get(
-        Uri.parse('https://sdcusarattendance.onrender.com/api/v1/getClasses'),
+        Uri.parse('https://attendancesdcusar.onrender.com/api/v1/getClasses'),
         headers: {
           'Authorization':
               token, // Include the token in the Authorization header
@@ -62,10 +62,10 @@ class SemesterPageState extends State<SemesterPage> {
         print(jsonData['data']['user']);
         print(jsonData['data']['school']);
         print(jsonData['data']['user']);
-        print(jsonData['data']['batches']);
-        print('batches'.runtimeType);
+        print(jsonData['data']['batchData']);
+        print('batchData'.runtimeType);
         List<dynamic> batchesInfo =
-            List<dynamic>.from(jsonData['data']['batches']);
+            List<dynamic>.from(jsonData['data']['batchData']);
         print(batchesInfo.runtimeType);
         setState(() {
           name = jsonData['data']['user'];
@@ -74,7 +74,7 @@ class SemesterPageState extends State<SemesterPage> {
                   ? jsonData['data']['school'].toString()
                   : null;
           List<dynamic> batchesData =
-              jsonData['data'] != null && jsonData['data']['batches'] != null
+              jsonData['data'] != null && jsonData['data']['batchData'] != null
                   ? batchesInfo
                   : [];
 
@@ -104,21 +104,21 @@ class SemesterPageState extends State<SemesterPage> {
     }
   }
 
-  String? getSubjectCode(String subjectName) {
-    final Map<String, String> subjectCodeMap = {
-      'Software Engineering': 'ARD201',
-      'Convex Optimisation': 'ABS212',
-      'Introduction to Machine Learning': 'ARM206',
-      'Operating System': 'ARD204',
-      'Design and Analysis of Algorithms': 'ARM208',
-      'Maths': 'ICT207',
-      'DSA': 'ICT204',
-      'Data Mining': 'ARM207',
-    };
-    // ignore: avoid_print
-    print(subjectCodeMap[subjectName]);
-    return subjectCodeMap[subjectName];
-  }
+  // String? getSubjectCode(String subjectName) {
+  //   final Map<String, String> subjectCodeMap = {
+  //     'Software Engineering': 'ARD201',
+  //     'Convex Optimisation': 'ABS212',
+  //     'Introduction to Machine Learning': 'ARM206',
+  //     'Operating System': 'ARD204',
+  //     'Design and Analysis of Algorithms': 'ARM208',
+  //     'Maths': 'ICT207',
+  //     'DSA': 'ICT204',
+  //     'Data Mining': 'ARM207',
+  //   };
+  //   // ignore: avoid_print
+  //   print(subjectCodeMap[subjectName]);
+  //   return subjectCodeMap[subjectName];
+  // }
 
   void updateStateWithBatches(List<dynamic> batchesData) {
     Set<String> uniqueSchools = Set<String>();
@@ -141,27 +141,25 @@ class SemesterPageState extends State<SemesterPage> {
         uniqueBatch.add(batch['batch']);
       }
       if (batch['subject_name'] != null &&
-          batch['subject_name'] != _selectedSubject 
-          ) {
+          batch['subject_name'] != _selectedSubject) {
         uniqueSubjects.add(batch['subject_name']);
       }
-      // for (final batch in batches) {
-    //   if (batch["stream"] == _selectedStream &&
-    //       batch["semester"] == _selectedSemester &&
-    //       batch["batch"] == _selectedBatch) {
-    //         subjects = uniqueSubjects.toList();
-    //       }
-    // }
+      // for (final batch in batchData) {
+      //   if (batch["stream"] == _selectedStream &&
+      //       batch["semester"] == _selectedSemester &&
+      //       batch["batch"] == _selectedBatch) {
+      //         subjects = uniqueSubjects.toList();
+      //       }
+      // }
       batchesList.add(batch);
     }
-    
 
     schools = uniqueSchools.toList();
     streams = uniqueStreams.toList();
     semesters = uniqueSemesters.toList();
     subjects = uniqueSubjects.toList();
     batchs = uniqueBatch.toList();
-    batches = batchesList;
+    batchData = batchesList;
     if (_selectedSchool != null && !schools.contains(_selectedSchool!)) {
       schools.add(_selectedSchool!);
     }
@@ -259,7 +257,7 @@ class SemesterPageState extends State<SemesterPage> {
                               name ?? '', // Display the name variable
                               style: TextStyle(
                                 fontFamily: "Poppins",
-                                fontSize: 30,
+                                fontSize: 20,
                                 fontWeight: FontWeight.w500,
                               ),
                               textAlign: TextAlign.start,
@@ -632,10 +630,10 @@ class SemesterPageState extends State<SemesterPage> {
                                                   throw Exception(
                                                       'Token not found');
                                                 }
-          
+
                                                 classDetails =
                                                     await getBatchDetails();
-          
+
                                                 if (classDetails != null &&
                                                     classDetails.isNotEmpty) {
                                                   final jsonData = jsonEncode({
@@ -648,10 +646,10 @@ class SemesterPageState extends State<SemesterPage> {
                                                   // print(getSubjectCode(
                                                   //     _selectedSubject!));
                                                   print(classDetails);
-          
+
                                                   final url = Uri.parse(
-                                                      'https://sdcusarattendance.onrender.com/api/v1/generatePID');
-          
+                                                      'https://attendancesdcusar.onrender.com/api/v1/generatePID');
+
                                                   final response =
                                                       await http.post(
                                                     url,
@@ -662,7 +660,7 @@ class SemesterPageState extends State<SemesterPage> {
                                                     },
                                                     body: jsonData,
                                                   );
-          
+
                                                   if (response.statusCode ==
                                                           200 ||
                                                       response.statusCode ==
@@ -673,7 +671,7 @@ class SemesterPageState extends State<SemesterPage> {
                                                               dynamic>,
                                                       classDetails
                                                     ];
-          
+
                                                     print(
                                                         'Response Data: $responseData');
                                                     _navigateToAttendancePage(
@@ -748,7 +746,7 @@ class SemesterPageState extends State<SemesterPage> {
 
   Future<dynamic> getBatchDetails() async {
     final url =
-        Uri.parse('https://sdcusarattendance.onrender.com/api/v1/getClasses');
+        Uri.parse('https://attendancesdcusar.onrender.com/api/v1/getClasses');
 
     try {
       final token = await tokenManager.getToken();
@@ -769,12 +767,12 @@ class SemesterPageState extends State<SemesterPage> {
 
         if (jsonResponse['success'] == true) {
           final data = jsonResponse['data'];
-          final batches = data['batches'] as List<dynamic>;
+          final batchData = data['batchData'] as List<dynamic>;
 
-          if (batches.isNotEmpty) {
+          if (batchData.isNotEmpty) {
             dynamic data;
 
-            for (final batch in batches) {
+            for (final batch in batchData) {
               if (batch["stream"] == _selectedStream &&
                   batch["semester"] == _selectedSemester &&
                   batch["batch"] == _selectedBatch) {
