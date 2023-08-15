@@ -16,6 +16,7 @@ class SemesterPageState extends State<SemesterPage> {
   late List<String> schools = [];
   late List<String> streams = [];
   late List<int> semesters = [];
+
   late List<String> subjects = [];
   late List<String> batchs = [];
   late List<dynamic> classDetails = [];
@@ -26,6 +27,17 @@ class SemesterPageState extends State<SemesterPage> {
   String? _selectedSubject;
   String? _selectedBatchID;
   String? _selectedBatch;
+  String? timestamp = getCurrentDateTimeFormatted();
+  List<String> timestamps = [
+    '9:00am - 10:00am',
+    '10:00am - 11:00am',
+    '11:00am - 12:00pm',
+    '12:00pm - 1:00pm',
+    '1:00pm - 2:00pm',
+    '2:00pm - 3:00pm',
+    '3:00pm - 4:00pm',
+    '4:00pm - 5:00pm'
+  ];
 
   bool _isLoading = false;
   late String name = '';
@@ -232,505 +244,573 @@ class SemesterPageState extends State<SemesterPage> {
                 ],
               ),
             ),
-            body: Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Container(
-                    height: 10,
-                    child: Center(
-                      child: Icon(
-                        Icons.person_rounded,
-                        size: 60,
+            body: SingleChildScrollView(
+              child: Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Container(
+                      height: 10,
+                      child: Center(
+                        child: Icon(
+                          Icons.person_rounded,
+                          size: 60,
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Container(
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          child: Center(
+                    SizedBox(
+                      height: 60,
+                    ),
+                    Container(
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            child: Center(
+                              child: Text(
+                                name ?? '', // Display the name variable
+                                style: TextStyle(
+                                  fontFamily: "Poppins",
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                textAlign: TextAlign.start,
+                              ),
+                            ),
+                          ),
+                          Container(
                             child: Text(
-                              name ?? '', // Display the name variable
+                              "Professor",
                               style: TextStyle(
                                 fontFamily: "Poppins",
                                 fontSize: 20,
-                                fontWeight: FontWeight.w500,
                               ),
                               textAlign: TextAlign.start,
                             ),
                           ),
-                        ),
-                        Container(
-                          child: Text(
-                            "Professor",
-                            style: TextStyle(
-                              fontFamily: "Poppins",
-                              fontSize: 20,
-                            ),
-                            textAlign: TextAlign.start,
+                          SizedBox(
+                            height: 30.0,
                           ),
-                        ),
-                        SizedBox(
-                          height: 30.0,
-                        ),
-                        Container(
-                          child: Center(
-                            child: Column(
-                              children: <Widget>[
-                                _selectedSchool == null
-                                    ? CircularProgressIndicator()
-                                    : Padding(
-                                        padding: const EdgeInsets.all(2.0),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            color: Color.fromRGBO(4, 29, 83, 1),
-                                          ),
-                                          margin: EdgeInsets.all(10.0),
-                                          width: 320,
-                                          alignment: Alignment.center,
-                                          child: DropdownButton<String>(
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                            isExpanded: true,
-                                            iconEnabledColor: Colors.white,
-                                            value: _selectedSchool,
-                                            underline: SizedBox(),
-                                            items: schools.map((school) {
-                                              print(school);
-                                              return DropdownMenuItem<String>(
-                                                value: school,
-                                                child: Center(
-                                                  child: Text(
-                                                    school,
-                                                    style: TextStyle(
-                                                      fontSize: 18,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                            }).toList(),
-                                            onChanged: (newValue) async {
-                                              setState(() {
-                                                _selectedSchool = newValue;
-                                                _selectedStream =
-                                                    null; // Reset selected stream
-                                                _selectedSemester =
-                                                    null; // Reset selected semester
-                                                _selectedBatch = null;
-                                                _selectedSubject =
-                                                    null; // Reset selected subject
-                                              });
-                                            },
-                                            hint: _selectedSchool == null
-                                                ? Center(
+                          Container(
+                            child: Center(
+                              child: Column(
+                                children: <Widget>[
+                                  _selectedSchool == null
+                                      ? CircularProgressIndicator()
+                                      : Padding(
+                                          padding: const EdgeInsets.all(2.0),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              color:
+                                                  Color.fromRGBO(4, 29, 83, 1),
+                                            ),
+                                            margin: EdgeInsets.all(10.0),
+                                            width: 320,
+                                            alignment: Alignment.center,
+                                            child: DropdownButton<String>(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              isExpanded: true,
+                                              iconEnabledColor: Colors.white,
+                                              value: _selectedSchool,
+                                              underline: SizedBox(),
+                                              items: schools.map((school) {
+                                                print(school);
+                                                return DropdownMenuItem<String>(
+                                                  value: school,
+                                                  child: Center(
                                                     child: Text(
-                                                      "Select School",
+                                                      school,
                                                       style: TextStyle(
-                                                        color: Colors.white,
                                                         fontSize: 18,
+                                                        color: Colors.white,
                                                       ),
                                                     ),
-                                                  )
-                                                : null,
-                                            dropdownColor:
-                                                Color.fromRGBO(0, 70, 121, 1),
+                                                  ),
+                                                );
+                                              }).toList(),
+                                              onChanged: (newValue) async {
+                                                setState(() {
+                                                  _selectedSchool = newValue;
+                                                  _selectedStream =
+                                                      null; // Reset selected stream
+                                                  _selectedSemester =
+                                                      null; // Reset selected semester
+                                                  _selectedBatch = null;
+                                                  _selectedSubject =
+                                                      null; // Reset selected subject
+                                                });
+                                              },
+                                              hint: _selectedSchool == null
+                                                  ? Center(
+                                                      child: Text(
+                                                        "Select School",
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 18,
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : null,
+                                              dropdownColor:
+                                                  Color.fromRGBO(0, 70, 121, 1),
+                                            ),
                                           ),
                                         ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(2.0),
+                                    child: Container(
+                                      margin: EdgeInsets.all(10.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: Color.fromRGBO(4, 29, 83, 1),
                                       ),
-                                Padding(
-                                  padding: const EdgeInsets.all(2.0),
-                                  child: Container(
-                                    margin: EdgeInsets.all(10.0),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Color.fromRGBO(4, 29, 83, 1),
-                                    ),
-                                    width: 320,
-                                    alignment: Alignment.center,
-                                    child: _selectedSchool == null
-                                        ? null
-                                        : Container(
-                                            child: DropdownButton<String>(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                              isExpanded: true,
-                                              iconEnabledColor: Colors.white,
-                                              underline: SizedBox(),
-                                              value: _selectedStream,
-                                              items: streams.map((stream) {
-                                                return DropdownMenuItem<String>(
-                                                  value: stream,
-                                                  child: Center(
-                                                    child: Text(
-                                                      stream,
-                                                      style: TextStyle(
-                                                        fontSize: 18,
-                                                        color: Colors.white,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              }).toList(),
-                                              onChanged: (newValue) {
-                                                setState(() {
-                                                  _selectedStream = newValue;
-                                                  _selectedBatch = null;
-                                                  _selectedSemester = null;
-                                                  _selectedSubject = null;
-                                                });
-                                              },
-                                              hint: _selectedStream == null
-                                                  ? Center(
+                                      width: 320,
+                                      alignment: Alignment.center,
+                                      child: _selectedSchool == null
+                                          ? null
+                                          : Container(
+                                              child: DropdownButton<String>(
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                                isExpanded: true,
+                                                iconEnabledColor: Colors.white,
+                                                underline: SizedBox(),
+                                                value: _selectedStream,
+                                                items: streams.map((stream) {
+                                                  return DropdownMenuItem<
+                                                      String>(
+                                                    value: stream,
+                                                    child: Center(
                                                       child: Text(
-                                                        'Select Branch',
+                                                        stream,
                                                         style: TextStyle(
-                                                          color: Colors.white,
                                                           fontSize: 18,
+                                                          color: Colors.white,
                                                         ),
                                                       ),
-                                                    )
-                                                  : null,
-                                              dropdownColor:
-                                                  Color.fromRGBO(0, 70, 121, 1),
-                                            ),
-                                          ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(2.0),
-                                  child: Container(
-                                    margin: EdgeInsets.all(10.0),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Color.fromRGBO(4, 29, 83, 1),
-                                    ),
-                                    width: 320,
-                                    alignment: Alignment.center,
-                                    child: _selectedSchool == null
-                                        ? null
-                                        : Container(
-                                            child: DropdownButton<int>(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                              isExpanded: true,
-                                              iconEnabledColor: Colors.white,
-                                              value: _selectedSemester,
-                                              underline: SizedBox(),
-                                              items: semesters.map((semester) {
-                                                return DropdownMenuItem<int>(
-                                                  value: semester,
-                                                  child: Center(
-                                                    child: Text(
-                                                      semester.toString(),
-                                                      style: TextStyle(
-                                                        fontSize: 18,
-                                                        color: Colors.white,
-                                                      ),
                                                     ),
-                                                  ),
-                                                );
-                                              }).toList(),
-                                              onChanged: (newValue) {
-                                                setState(() {
-                                                  _selectedSemester = newValue;
-                                                  _selectedBatch = null;
-                                                  _selectedSubject = null;
-                                                });
-                                              },
-                                              hint: _selectedSemester == null
-                                                  ? Center(
-                                                      child: Text(
-                                                        'Select Semester',
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 18,
-                                                        ),
-                                                      ),
-                                                    )
-                                                  : null,
-                                              dropdownColor:
-                                                  Color.fromRGBO(0, 70, 121, 1),
-                                            ),
-                                          ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(2.0),
-                                  child: Container(
-                                    margin: EdgeInsets.all(10.0),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Color.fromRGBO(4, 29, 83, 1),
-                                    ),
-                                    width: 320,
-                                    alignment: Alignment.center,
-                                    child: _selectedSchool == null
-                                        ? null
-                                        : Container(
-                                            child: DropdownButton<String>(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                              isExpanded: true,
-                                              iconEnabledColor: Colors.white,
-                                              underline: SizedBox(),
-                                              value: _selectedBatch,
-                                              items: batchs.map((batch) {
-                                                return DropdownMenuItem<String>(
-                                                  value: batch,
-                                                  child: Center(
-                                                    child: Text(
-                                                      batch,
-                                                      style: TextStyle(
-                                                        fontSize: 18,
-                                                        color: Colors.white,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              }).toList(),
-                                              onChanged: (newValue) {
-                                                setState(() {
-                                                  _selectedBatch = newValue;
-                                                  _selectedSubject = null;
-                                                });
-                                              },
-                                              hint: _selectedBatch == null
-                                                  ? Center(
-                                                      child: Text(
-                                                        'Select Batch',
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 18,
-                                                        ),
-                                                      ),
-                                                    )
-                                                  : null,
-                                              dropdownColor:
-                                                  Color.fromRGBO(0, 70, 121, 1),
-                                            ),
-                                          ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: Container(
-                                    margin: EdgeInsets.all(10.0),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Color.fromRGBO(4, 29, 83, 1),
-                                    ),
-                                    width: 320,
-                                    alignment: Alignment.center,
-                                    child: _selectedSchool == null
-                                        ? null
-                                        : Container(
-                                            child: DropdownButton<String>(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                              isExpanded: true,
-                                              iconEnabledColor: Colors.white,
-                                              value: _selectedSubject,
-                                              underline: SizedBox(),
-                                              items: subjects.map((subject) {
-                                                return DropdownMenuItem<String>(
-                                                  value: subject,
-                                                  child: Center(
-                                                    child: Text(
-                                                      subject,
-                                                      style: TextStyle(
-                                                        fontSize: 18,
-                                                        color: Colors.white,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              }).toList(),
-                                              onChanged: (newValue) {
-                                                setState(() {
-                                                  _selectedSubject = newValue;
-                                                });
-                                              },
-                                              hint: _selectedSubject == null
-                                                  ? Center(
-                                                      child: Text(
-                                                        'Select Subject',
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 18,
-                                                        ),
-                                                      ),
-                                                    )
-                                                  : null,
-                                              dropdownColor:
-                                                  Color.fromRGBO(0, 70, 121, 1),
-                                            ),
-                                          ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 40,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(28.0),
-                                  child: Container(
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        minimumSize: Size(320, 50),
-                                        backgroundColor:
-                                            Color.fromRGBO(0, 70, 121, 1),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-                                        ),
-                                      ),
-                                      child: _isLoading
-                                          ? Container(
-                                              width: 50,
-                                              height: 50,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: Colors.blue,
-                                              ),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child:
-                                                    CircularProgressIndicator(
-                                                  strokeWidth: 3,
-                                                  valueColor:
-                                                      AlwaysStoppedAnimation<
-                                                          Color>(Colors.white),
-                                                ),
-                                              ),
-                                            )
-                                          : Text(
-                                              "Continue",
-                                              style: TextStyle(
-                                                fontSize: 22,
-                                                fontFamily: "Poppins",
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                      onPressed: isContinueButtonEnabled
-                                          ? () async {
-                                              setState(() {
-                                                _isLoading = true;
-                                              });
-                                              try {
-                                                final token = await tokenManager
-                                                    .getToken(); // Get token using TokenManager
-                                                if (token == null) {
-                                                  throw Exception(
-                                                      'Token not found');
-                                                }
-
-                                                classDetails =
-                                                    await getBatchDetails();
-
-                                                if (classDetails != null &&
-                                                    classDetails.isNotEmpty) {
-                                                  final jsonData = jsonEncode({
-                                                    'batchId': classDetails[0]
-                                                        .toString(),
-                                                    'code': classDetails[1],
-                                                    'timestamp':
-                                                        getCurrentDateTimeFormatted()
-                                                  });
-                                                  // print(getSubjectCode(
-                                                  //     _selectedSubject!));
-                                                  print(classDetails);
-
-                                                  final url = Uri.parse(
-                                                      'https://attendancesdcusar.onrender.com/api/v1/generatePID');
-
-                                                  final response =
-                                                      await http.post(
-                                                    url,
-                                                    headers: {
-                                                      'Authorization': token,
-                                                      'Content-Type':
-                                                          'application/json',
-                                                    },
-                                                    body: jsonData,
                                                   );
+                                                }).toList(),
+                                                onChanged: (newValue) {
+                                                  setState(() {
+                                                    _selectedStream = newValue;
+                                                    _selectedBatch = null;
+                                                    _selectedSemester = null;
+                                                    _selectedSubject = null;
+                                                  });
+                                                },
+                                                hint: _selectedStream == null
+                                                    ? Center(
+                                                        child: Text(
+                                                          'Select Branch',
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 18,
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : null,
+                                                dropdownColor: Color.fromRGBO(
+                                                    0, 70, 121, 1),
+                                              ),
+                                            ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(2.0),
+                                    child: Container(
+                                      margin: EdgeInsets.all(10.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: Color.fromRGBO(4, 29, 83, 1),
+                                      ),
+                                      width: 320,
+                                      alignment: Alignment.center,
+                                      child: _selectedSchool == null
+                                          ? null
+                                          : Container(
+                                              child: DropdownButton<int>(
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                                isExpanded: true,
+                                                iconEnabledColor: Colors.white,
+                                                value: _selectedSemester,
+                                                underline: SizedBox(),
+                                                items:
+                                                    semesters.map((semester) {
+                                                  return DropdownMenuItem<int>(
+                                                    value: semester,
+                                                    child: Center(
+                                                      child: Text(
+                                                        semester.toString(),
+                                                        style: TextStyle(
+                                                          fontSize: 18,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }).toList(),
+                                                onChanged: (newValue) {
+                                                  setState(() {
+                                                    _selectedSemester =
+                                                        newValue;
+                                                    _selectedBatch = null;
+                                                    _selectedSubject = null;
+                                                  });
+                                                },
+                                                hint: _selectedSemester == null
+                                                    ? Center(
+                                                        child: Text(
+                                                          'Select Semester',
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 18,
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : null,
+                                                dropdownColor: Color.fromRGBO(
+                                                    0, 70, 121, 1),
+                                              ),
+                                            ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(2.0),
+                                    child: Container(
+                                      margin: EdgeInsets.all(10.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: Color.fromRGBO(4, 29, 83, 1),
+                                      ),
+                                      width: 320,
+                                      alignment: Alignment.center,
+                                      child: _selectedSchool == null
+                                          ? null
+                                          : Container(
+                                              child: DropdownButton<String>(
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                                isExpanded: true,
+                                                iconEnabledColor: Colors.white,
+                                                underline: SizedBox(),
+                                                value: _selectedBatch,
+                                                items: batchs.map((batch) {
+                                                  return DropdownMenuItem<
+                                                      String>(
+                                                    value: batch,
+                                                    child: Center(
+                                                      child: Text(
+                                                        batch,
+                                                        style: TextStyle(
+                                                          fontSize: 18,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }).toList(),
+                                                onChanged: (newValue) {
+                                                  setState(() {
+                                                    _selectedBatch = newValue;
+                                                    _selectedSubject = null;
+                                                  });
+                                                },
+                                                hint: _selectedBatch == null
+                                                    ? Center(
+                                                        child: Text(
+                                                          'Select Batch',
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 18,
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : null,
+                                                dropdownColor: Color.fromRGBO(
+                                                    0, 70, 121, 1),
+                                              ),
+                                            ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Container(
+                                      margin: EdgeInsets.all(10.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: Color.fromRGBO(4, 29, 83, 1),
+                                      ),
+                                      width: 320,
+                                      alignment: Alignment.center,
+                                      child: _selectedSchool == null
+                                          ? null
+                                          : Container(
+                                              child: DropdownButton<String>(
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                                isExpanded: true,
+                                                iconEnabledColor: Colors.white,
+                                                value: _selectedSubject,
+                                                underline: SizedBox(),
+                                                items: subjects.map((subject) {
+                                                  return DropdownMenuItem<
+                                                      String>(
+                                                    value: subject,
+                                                    child: Center(
+                                                      child: Text(
+                                                        subject,
+                                                        style: TextStyle(
+                                                          fontSize: 18,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }).toList(),
+                                                onChanged: (newValue) {
+                                                  setState(() {
+                                                    _selectedSubject = newValue;
+                                                  });
+                                                },
+                                                hint: _selectedSubject == null
+                                                    ? Center(
+                                                        child: Text(
+                                                          'Select Subject',
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 18,
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : null,
+                                                dropdownColor: Color.fromRGBO(
+                                                    0, 70, 121, 1),
+                                              ),
+                                            ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(2.0),
+                                    child: Container(
+                                      margin: EdgeInsets.all(5.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: Color.fromRGBO(4, 29, 83, 1),
+                                      ),
+                                      width: 320,
+                                      alignment: Alignment.center,
+                                      child: DropdownButton<String>(
+                                        borderRadius: BorderRadius.circular(5),
+                                        isExpanded: true,
+                                        iconEnabledColor: Colors.white,
+                                        // value: _selectedSemester,
+                                        underline: SizedBox(),
+                                        items: timestamps.map((item) {
+                                          return DropdownMenuItem<String>(
+                                              value: item,
+                                              child: Center(
+                                                // Set the value for each item
+                                                child: Text(
+                                                  item,
+                                                  style: TextStyle(
+                                                    fontSize: 18,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ));
+                                        }).toList(),
+                                        onChanged: (newValue) {
+                                          setState(() {
+                                            // _selectedSemester = newValue;
+                                            // _selectedBatch = null;
+                                            // _selectedSubject = null;
+                                          });
+                                        },
+                                        hint: Center(
+                                          child: Text(
+                                            timestamp!, // time stamp
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                            ),
+                                          ),
+                                        ),
+                                        dropdownColor:
+                                            Color.fromRGBO(0, 70, 121, 1),
+                                      ),
+                                    ),
+                                  ),
+                                  // SizedBox(
+                                  //   height: 20, // Adjust the height as needed
+                                  // ),
+                                  // SizedBox(
+                                  //   height: 40,
+                                  // ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(28.0),
+                                    child: Container(
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          minimumSize: Size(320, 50),
+                                          backgroundColor:
+                                              Color.fromRGBO(0, 70, 121, 1),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(50),
+                                          ),
+                                        ),
+                                        child: _isLoading
+                                            ? Container(
+                                                width: 50,
+                                                height: 50,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: Colors.blue,
+                                                ),
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    strokeWidth: 3,
+                                                    valueColor:
+                                                        AlwaysStoppedAnimation<
+                                                                Color>(
+                                                            Colors.white),
+                                                  ),
+                                                ),
+                                              )
+                                            : Text(
+                                                "Continue",
+                                                style: TextStyle(
+                                                  fontSize: 22,
+                                                  fontFamily: "Poppins",
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                        onPressed: isContinueButtonEnabled
+                                            ? () async {
+                                                setState(() {
+                                                  _isLoading = true;
+                                                });
+                                                try {
+                                                  final token = await tokenManager
+                                                      .getToken(); // Get token using TokenManager
+                                                  if (token == null) {
+                                                    throw Exception(
+                                                        'Token not found');
+                                                  }
 
-                                                  if (response.statusCode ==
-                                                          200 ||
-                                                      response.statusCode ==
-                                                          201) {
-                                                    final responseData = [
-                                                      jsonDecode(response.body)
-                                                          as Map<String,
-                                                              dynamic>,
-                                                      classDetails
-                                                    ];
+                                                  classDetails =
+                                                      await getBatchDetails();
 
-                                                    print(
-                                                        'Response Data: $responseData');
-                                                    _navigateToAttendancePage(
-                                                        responseData, context);
-                                                    // Process the response data as needed
-                                                    // Navigator.push(
-                                                    //   context,
-                                                    //   MaterialPageRoute(
-                                                    //       builder: (context) =>
-                                                    //           AttendancePage()),
-                                                    // );
+                                                  if (classDetails != null &&
+                                                      classDetails.isNotEmpty) {
+                                                    final jsonData =
+                                                        jsonEncode({
+                                                      'batchId': classDetails[0]
+                                                          .toString(),
+                                                      'code': classDetails[1],
+                                                      'timestamp': timestamp
+                                                    });
+                                                    // print(getSubjectCode(
+                                                    //     _selectedSubject!));
+                                                    print(classDetails);
+
+                                                    final url = Uri.parse(
+                                                        'https://attendancesdcusar.onrender.com/api/v1/generatePID');
+
+                                                    final response =
+                                                        await http.post(
+                                                      url,
+                                                      headers: {
+                                                        'Authorization': token,
+                                                        'Content-Type':
+                                                            'application/json',
+                                                      },
+                                                      body: jsonData,
+                                                    );
+
+                                                    if (response.statusCode ==
+                                                            200 ||
+                                                        response.statusCode ==
+                                                            201) {
+                                                      final responseData = [
+                                                        jsonDecode(
+                                                                response.body)
+                                                            as Map<String,
+                                                                dynamic>,
+                                                        classDetails
+                                                      ];
+
+                                                      print(
+                                                          'Response Data: $responseData');
+                                                      _navigateToAttendancePage(
+                                                          responseData,
+                                                          context);
+                                                      // Process the response data as needed
+                                                      // Navigator.push(
+                                                      //   context,
+                                                      //   MaterialPageRoute(
+                                                      //       builder: (context) =>
+                                                      //           AttendancePage()),
+                                                      // );
+                                                    } else {
+                                                      print(
+                                                          'Response Status Code: ${response.statusCode}');
+                                                      print(
+                                                          'Response Body: ${response.body}');
+                                                      throw Exception(
+                                                          'Failed to generate PID. Status code: ${response.statusCode}');
+                                                    }
                                                   } else {
                                                     print(
-                                                        'Response Status Code: ${response.statusCode}');
-                                                    print(
-                                                        'Response Body: ${response.body}');
-                                                    throw Exception(
-                                                        'Failed to generate PID. Status code: ${response.statusCode}');
+                                                        'Failed to retrieve batch ID');
                                                   }
-                                                } else {
+                                                } catch (e) {
                                                   print(
-                                                      'Failed to retrieve batch ID');
+                                                      'Exception details: $e');
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) =>
+                                                        AlertDialog(
+                                                      title: Text('Error'),
+                                                      content: Text(
+                                                          'An error occurred while generating PID.'),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop(); // Close the dialog
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop(); // Navigate back to LoginPage
+                                                          },
+                                                          child: Text('OK'),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
                                                 }
-                                              } catch (e) {
-                                                print('Exception details: $e');
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) =>
-                                                      AlertDialog(
-                                                    title: Text('Error'),
-                                                    content: Text(
-                                                        'An error occurred while generating PID.'),
-                                                    actions: [
-                                                      TextButton(
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pop(); // Close the dialog
-                                                          Navigator.of(context)
-                                                              .pop(); // Navigate back to LoginPage
-                                                        },
-                                                        child: Text('OK'),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
                                               }
-                                            }
-                                          : null,
+                                            : null,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           );
