@@ -6,6 +6,7 @@ import 'token_manager.dart';
 
 Future<void> login(
     BuildContext context, String instructorId, String password) async {
+    // String? responseMessage;
   final url =
       Uri.parse('https://attendancesdcusar.onrender.com/api/v1/Loginapp');
   final tokenManager = TokenManager(); // create an instance of TokenManager
@@ -37,15 +38,29 @@ Future<void> login(
       } else {
         throw Exception('Failed to login: ${jsonResponse['message']}');
       }
-    } else {
-      throw Exception('Failed to login: ${response.statusCode}, ${response}');
-    }
-  } catch (e) {
-    print(e);
-    showDialog(
+    } else if(response.statusCode == 404){
+      final responseMessage = json.decode(response.body);
+      final message = responseMessage['message'];
+      showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text('Incorrect Password'),
+        title: Text(message.toString()),
+        // content: Text('If you don\'t remember the Password Please, Reset it'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+    }else {
+      final responseMessage = json.decode(response.body);
+      final message = responseMessage['message'];
+      showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(message.toString()),
         content: Text('If you don\'t remember the Password Please, Reset it'),
         actions: [
           TextButton(
@@ -55,5 +70,8 @@ Future<void> login(
         ],
       ),
     );
+    }
+  } catch (e) {
+    print(e);
   }
 }
