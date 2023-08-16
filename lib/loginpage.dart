@@ -47,12 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void _login() {
-    setState(() {
-      _isLoading = true;
-    });
-    // Perform login logic here
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -263,15 +258,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                             ),
                                           ),
                                     onPressed: () async {
-                                      setState(() {
-                                        _isLoading = true;
-                                      });
-                                      if (_formKey.currentState!.validate()) {
-                                        await login(
-                                          context,
-                                          instructor_id,
-                                          password,
-                                        );
+                                      if (!_isLoading) {
+                                        setState(() {
+                                          _isLoading = true;
+                                        });
+                                        if (_formKey.currentState!.validate()) {
+                                          await login(
+                                              context, instructor_id, password);
+                                        }
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
                                       }
                                     },
                                   ),

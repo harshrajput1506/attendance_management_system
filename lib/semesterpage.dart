@@ -26,18 +26,43 @@ class SemesterPageState extends State<SemesterPage> {
   int? _selectedSemester;
   String? _selectedSubject;
   String? _selectedBatchID;
+  String? _selectedTimestamp;
   String? _selectedBatch;
-  String? timestamp = getCurrentDateTimeFormatted();
-  List<String> timestamps = [
-    '9:00am - 10:00am',
-    '10:00am - 11:00am',
-    '11:00am - 12:00pm',
-    '12:00pm - 1:00pm',
-    '1:00pm - 2:00pm',
-    '2:00pm - 3:00pm',
-    '3:00pm - 4:00pm',
-    '4:00pm - 5:00pm'
-  ];
+  // String? timestamp = getCurrentDateTimeFormatted();
+  // List<String> timestamps = [
+  //   DateTime.now().toString(),
+  //   '9:00am - 10:00am',
+  //   '10:00am - 11:00am',
+  //   '11:00am - 12:00pm',
+  //   '12:00pm - 1:00pm',
+  //   '1:00pm - 2:00pm',
+  //   '2:00pm - 3:00pm',
+  //   '3:00pm - 4:00pm',
+  //   '4:00pm - 5:00pm'
+  // ];
+
+  List<String> getTimestamps() {
+  final now = DateTime.now();
+  final timestamps = List.generate(25, (index) {
+    final startTimestamp = now.subtract(Duration(hours: index + 1));
+    final endTimestamp = now.subtract(Duration(hours: index));
+    
+    final startHour = startTimestamp.hour.toString().padLeft(2, '0');
+    final startMinute = startTimestamp.minute.toString().padLeft(2, '0');
+    final endHour = endTimestamp.hour.toString().padLeft(2, '0');
+    final endMinute = endTimestamp.minute.toString().padLeft(2, '0');
+    
+    final startTime = '$startHour:$startMinute';
+    final endTime = '$endHour:$endMinute';
+    
+    final formattedTimestamp = '$startTime - $endTime';
+    
+    return formattedTimestamp;
+  });
+  
+  return timestamps;
+}
+
 
   bool _isLoading = false;
   late String name = '';
@@ -197,6 +222,7 @@ class SemesterPageState extends State<SemesterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final timestamps = getTimestamps();
     return FutureBuilder<bool>(
       future: tokenManager.isTokenValid(), // Check if token is valid
       builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
@@ -594,56 +620,54 @@ class SemesterPageState extends State<SemesterPage> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.all(2.0),
-                                    child: Container(
-                                      margin: EdgeInsets.all(5.0),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        color: Color.fromRGBO(4, 29, 83, 1),
-                                      ),
-                                      width: 320,
-                                      alignment: Alignment.center,
-                                      child: DropdownButton<String>(
-                                        borderRadius: BorderRadius.circular(5),
-                                        isExpanded: true,
-                                        iconEnabledColor: Colors.white,
-                                        // value: _selectedSemester,
-                                        underline: SizedBox(),
-                                        items: timestamps.map((item) {
-                                          return DropdownMenuItem<String>(
-                                              value: item,
-                                              child: Center(
-                                                // Set the value for each item
-                                                child: Text(
-                                                  item,
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ));
-                                        }).toList(),
-                                        onChanged: (newValue) {
-                                          setState(() {
-                                            // _selectedSemester = newValue;
-                                            // _selectedBatch = null;
-                                            // _selectedSubject = null;
-                                          });
-                                        },
-                                        hint: Center(
-                                          child: Text(
-                                            timestamp!, // time stamp
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 18,
-                                            ),
-                                          ),
-                                        ),
-                                        dropdownColor:
-                                            Color.fromRGBO(0, 70, 121, 1),
-                                      ),
-                                    ),
-                                  ),
+  padding: const EdgeInsets.all(2.0),
+  child: Container(
+    margin: EdgeInsets.all(5.0),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(10),
+      color: Color.fromRGBO(4, 29, 83, 1),
+    ),
+    width: 320,
+    alignment: Alignment.center,
+    child: DropdownButton<String>(
+      borderRadius: BorderRadius.circular(5),
+      isExpanded: true,
+      iconEnabledColor: Colors.white,
+      value: _selectedTimestamp, // Set the currently selected timestamp
+      underline: SizedBox(),
+      items: timestamps.map((item) {
+        return DropdownMenuItem<String>(
+          value: item,
+          child: Center(
+            child: Text(
+              item,
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+      onChanged: (newValue) {
+        setState(() {
+          _selectedTimestamp = newValue; // Update the selected timestamp
+        });
+      },
+      hint: Center(
+        child: Text(
+          DateTime.now().toString(), // Default hint text
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+          ),
+        ),
+      ),
+      dropdownColor: Color.fromRGBO(0, 70, 121, 1),
+    ),
+  ),
+),
+
                                   // SizedBox(
                                   //   height: 20, // Adjust the height as needed
                                   // ),
@@ -715,7 +739,7 @@ class SemesterPageState extends State<SemesterPage> {
                                                       'batchId': classDetails[0]
                                                           .toString(),
                                                       'code': classDetails[1],
-                                                      'timestamp': timestamp
+                                                      'timestamp': _selectedTimestamp
                                                     });
                                                     // print(getSubjectCode(
                                                     //     _selectedSubject!));
@@ -892,12 +916,12 @@ class SemesterPageState extends State<SemesterPage> {
   }
 }
 
-String getCurrentDateTimeFormatted() {
-  DateTime now = DateTime.now();
-  String formattedDate = DateFormat('MM/dd/yyyy h:mm:ss a').format(now);
-  print(formattedDate);
-  return formattedDate;
-}
+// String getCurrentDateTimeFormatted() {
+//   DateTime now = DateTime.now();
+//   String formattedDate = DateFormat('MM/dd/yyyy h:mm:ss a').format(now);
+//   print(formattedDate);
+//   return formattedDate;
+// }
 
 void _navigateToAttendancePage(
     List<dynamic> responseData, BuildContext context) {
