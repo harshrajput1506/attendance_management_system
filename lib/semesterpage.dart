@@ -4,7 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'attendancepage.dart';
 import 'loginpage.dart';
-import 'package:intl/intl.dart';
+// import 'package:intl/intl.dart';
 import 'token_manager.dart';
 
 class SemesterPage extends StatefulWidget {
@@ -29,39 +29,39 @@ class SemesterPageState extends State<SemesterPage> {
   String? _selectedTimestamp;
   String? _selectedBatch;
   // String? timestamp = getCurrentDateTimeFormatted();
-  // List<String> timestamps = [
-  //   DateTime.now().toString(),
-  //   '9:00am - 10:00am',
-  //   '10:00am - 11:00am',
-  //   '11:00am - 12:00pm',
-  //   '12:00pm - 1:00pm',
-  //   '1:00pm - 2:00pm',
-  //   '2:00pm - 3:00pm',
-  //   '3:00pm - 4:00pm',
-  //   '4:00pm - 5:00pm'
-  // ];
+  List<String> timestamps = [
+    DateTime.now().toString(),
+    '9:00am - 10:00am',
+    '10:00am - 11:00am',
+    '11:00am - 12:00pm',
+    '12:00pm - 1:00pm',
+    '1:00pm - 2:00pm',
+    '2:00pm - 3:00pm',
+    '3:00pm - 4:00pm',
+    '4:00pm - 5:00pm'
+  ];
 
-  List<String> getTimestamps() {
-  final now = DateTime.now();
-  final timestamps = List.generate(25, (index) {
-    final startTimestamp = now.subtract(Duration(hours: index + 1));
-    final endTimestamp = now.subtract(Duration(hours: index));
+//   List<String> getTimestamps() {
+//   final now = DateTime.now();
+//   final timestamps = List.generate(25, (index) {
+//     final startTimestamp = now.subtract(Duration(hours: index + 1));
+//     final endTimestamp = now.subtract(Duration(hours: index));
     
-    final startHour = startTimestamp.hour.toString().padLeft(2, '0');
-    final startMinute = startTimestamp.minute.toString().padLeft(2, '0');
-    final endHour = endTimestamp.hour.toString().padLeft(2, '0');
-    final endMinute = endTimestamp.minute.toString().padLeft(2, '0');
+//     final startHour = startTimestamp.hour.toString().padLeft(2, '0');
+//     final startMinute = startTimestamp.minute.toString().padLeft(2, '0');
+//     final endHour = endTimestamp.hour.toString().padLeft(2, '0');
+//     final endMinute = endTimestamp.minute.toString().padLeft(2, '0');
     
-    final startTime = '$startHour:$startMinute';
-    final endTime = '$endHour:$endMinute';
+//     final startTime = '$startHour:$startMinute';
+//     final endTime = '$endHour:$endMinute';
     
-    final formattedTimestamp = '$startTime - $endTime';
+//     final formattedTimestamp = '$startTime - $endTime';
     
-    return formattedTimestamp;
-  });
+//     return formattedTimestamp;
+//   });
   
-  return timestamps;
-}
+//   return timestamps;
+// }
 
 
   bool _isLoading = false;
@@ -222,7 +222,6 @@ class SemesterPageState extends State<SemesterPage> {
 
   @override
   Widget build(BuildContext context) {
-    final timestamps = getTimestamps();
     return FutureBuilder<bool>(
       future: tokenManager.isTokenValid(), // Check if token is valid
       builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
@@ -656,7 +655,7 @@ class SemesterPageState extends State<SemesterPage> {
       },
       hint: Center(
         child: Text(
-          DateTime.now().toString(), // Default hint text
+          'Select Time', // Default hint text
           style: TextStyle(
             color: Colors.white,
             fontSize: 18,
@@ -821,6 +820,9 @@ class SemesterPageState extends State<SemesterPage> {
                                                     ),
                                                   );
                                                 }
+                                                 setState(() {
+                                                  _isLoading = false;
+                                                });
                                               }
                                             : null,
                                       ),
