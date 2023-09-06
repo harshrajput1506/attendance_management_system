@@ -8,7 +8,7 @@ Future<void> login(
     BuildContext context, String instructorId, String password) async {
     // String? responseMessage;
   final url =
-      Uri.parse('https://attendancesdcusar.onrender.com/api/v1/Loginapp');
+      Uri.parse('https://newsdcattendance.onrender.com/loginApp');
   final tokenManager = TokenManager(); // create an instance of TokenManager
 
   try {
@@ -30,6 +30,8 @@ Future<void> login(
       final result = jsonResponse['result'];
 
       if (success) {
+        print(token);
+        print('Text') ;
         await tokenManager.setToken(token); // save token using TokenManager
         Navigator.push(
           context,
