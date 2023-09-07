@@ -135,21 +135,7 @@ class SemesterPageState extends State<SemesterPage> {
     }
   }
 
-  // String? getSubjectCode(String subjectName) {
-  //   final Map<String, String> subjectCodeMap = {
-  //     'Software Engineering': 'ARD201',
-  //     'Convex Optimisation': 'ABS212',
-  //     'Introduction to Machine Learning': 'ARM206',
-  //     'Operating System': 'ARD204',
-  //     'Design and Analysis of Algorithms': 'ARM208',
-  //     'Maths': 'ICT207',
-  //     'DSA': 'ICT204',
-  //     'Data Mining': 'ARM207',
-  //   };
-  //   // ignore: avoid_print
-  //   print(subjectCodeMap[subjectName]);
-  //   return subjectCodeMap[subjectName];
-  // }
+
 
   void updateStateWithBatches(List<dynamic> batchesData) {
     Set<String> uniqueSchools = Set<String>();
@@ -175,13 +161,7 @@ class SemesterPageState extends State<SemesterPage> {
           batch['subject_name'] != _selectedSubject) {
         uniqueSubjects.add(batch['subject_name']);
       }
-      // for (final batch in batchData) {
-      //   if (batch["stream"] == _selectedStream &&
-      //       batch["semester"] == _selectedSemester &&
-      //       batch["batch"] == _selectedBatch) {
-      //         subjects = uniqueSubjects.toList();
-      //       }
-      // }
+
       batchesList.add(batch);
     }
 
@@ -237,7 +217,7 @@ class SemesterPageState extends State<SemesterPage> {
                     DrawerHeader(
                         child: CircleAvatar(
                       backgroundImage:
-                          AssetImage("assets/images/img_ggsipulogo1.png"),
+                          AssetImage("assets/images/img_ggsipulogo1.png"),radius: 50,
                     )),
                     ListTile(
                       leading: Icon(Icons.reset_tv_outlined),
