@@ -208,9 +208,10 @@ class SemesterPageState extends State<SemesterPage> {
             backgroundColor: Color.fromRGBO(255, 255, 255, 1),
             appBar: AppBar(
               elevation: 0,
-              backgroundColor: Color.fromRGBO(4, 29, 83, 1),
+              backgroundColor: Color.fromRGBO(255, 255, 255, 1)
             ),
             drawer: Drawer(
+              
               child: Container(
                 child: ListView(
                   children: [
