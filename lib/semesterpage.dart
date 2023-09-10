@@ -23,7 +23,7 @@ class SemesterPageState extends State<SemesterPage> {
   late List<String> batchs = [];
   late List<dynamic> classDetails = [];
   late List<Map<String, dynamic>> batchData = [];
-  
+
   String? _selectedSchool;
   String? _selectedStream;
   String? _selectedSemester;
@@ -53,7 +53,6 @@ class SemesterPageState extends State<SemesterPage> {
       });
     }
   }
-
 
   bool _isLoading = false;
   late String name = '';
@@ -135,8 +134,6 @@ class SemesterPageState extends State<SemesterPage> {
     }
   }
 
-
-
   void updateStateWithBatches(List<dynamic> batchesData) {
     Set<String> uniqueSchools = Set<String>();
     Set<String> uniqueStreams = Set<String>();
@@ -207,18 +204,17 @@ class SemesterPageState extends State<SemesterPage> {
           return Scaffold(
             backgroundColor: Color.fromRGBO(255, 255, 255, 1),
             appBar: AppBar(
-              elevation: 0,
-              backgroundColor: Color.fromRGBO(255, 255, 255, 1)
-            ),
+                elevation: 0,
+                backgroundColor: Color.fromRGBO(255, 255, 255, 1)),
             drawer: Drawer(
-              
               child: Container(
                 child: ListView(
                   children: [
                     DrawerHeader(
                         child: CircleAvatar(
                       backgroundImage:
-                          AssetImage("assets/images/img_ggsipulogo1.png"),radius: 50,
+                          AssetImage("assets/images/img_ggsipulogo1.png"),
+                      radius: 50,
                     )),
                     ListTile(
                       leading: Icon(Icons.reset_tv_outlined),
@@ -586,7 +582,6 @@ class SemesterPageState extends State<SemesterPage> {
                                           ),
                                   ),
                                 ),
-
                                 Padding(
                                   padding: const EdgeInsets.all(2.0),
                                   child: Container(
@@ -720,7 +715,6 @@ class SemesterPageState extends State<SemesterPage> {
                                     ],
                                   ),
                                 ),
-                                
                                 Padding(
                                   padding: const EdgeInsets.all(28.0),
                                   child: Container(
@@ -789,6 +783,14 @@ class SemesterPageState extends State<SemesterPage> {
                                                   print("Period ID: $periodId");
 
                                                   // Now, you have batchId and periodId. Send them to the backend as needed.
+                                                  final List<dynamic>
+                                                      responseData = <dynamic>[
+                                                    batchId,
+                                                    periodId
+                                                  ];
+                                                  print("List $responseData");
+                                                  _navigateToAttendancePage(
+                                                      responseData, context);
                                                   // You can use a network request library like http package to send a POST request.
                                                 } else {
                                                   print(
@@ -826,9 +828,9 @@ class SemesterPageState extends State<SemesterPage> {
     );
   }
 
-  Future<dynamic> getBatchDetails() async {
+  /*Future<dynamic> getBatchDetails() async {
     final url =
-        Uri.parse('https://attendancesdcusar.onrender.com/api/v1/getClasses');
+        Uri.parse('https://newsdcattendance.onrender.com/generateClasses');
 
     try {
       final token = await tokenManager.getToken();
@@ -891,7 +893,7 @@ class SemesterPageState extends State<SemesterPage> {
       print('Exception in getBatchDetails(): $e');
       return null; // Return null in case of any exception
     }
-  }
+  }*/
 }
 
 // String getCurrentDateTimeFormatted() {

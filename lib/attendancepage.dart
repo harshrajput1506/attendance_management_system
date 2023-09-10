@@ -7,18 +7,29 @@ import 'token_manager.dart';
 
 class AttendanceModel {
   final String name;
-  final int enrollmentNo;
+  final String enrollmentNo;
+  final int id;
+  final String email;
+  String status;
 
-  AttendanceModel({
-    required this.name,
-    required this.enrollmentNo,
-  });
+  AttendanceModel(
+      {required this.name,
+      required this.enrollmentNo,
+      required this.id,
+      required this.email,
+      required this.status});
 
   factory AttendanceModel.fromJson(Map<String, dynamic> json) {
     return AttendanceModel(
-      name: json['name'] as String,
-      enrollmentNo: json['enrollment_no'] as int,
-    );
+        name: json['name'] as String,
+        enrollmentNo: json['enrollmentNo'] as String,
+        id: json["id"] as int,
+        email: json["email"] as String,
+        status: "absent");
+  }
+
+  set setStatus(String status) {
+    this.status = status;
   }
 
   @override
@@ -41,23 +52,23 @@ class AttendancePageState extends State<AttendancePage> {
   String courseName = '';
   String stream = '';
   String comment = '';
-  List<bool> isSelected = [];
+  //List<bool> isSelected = [];
   List<AttendanceModel> selectedStudents = [];
   bool _isMounted = false;
   bool markAllPresent = false;
 
   @override
   void initState() {
-    print(widget.responseData);
+    print("${widget.responseData} response data");
     super.initState();
     _isMounted = true;
 
-    getStudentsDataApi(widget.responseData[1][0], widget.responseData[1][2])
+    getStudentsDataApi(widget.responseData[0], widget.responseData[1])
         .then((students) {
       if (_isMounted) {
         setState(() {
           studentsList = students;
-          isSelected = List.generate(studentsList.length, (_) => false);
+          //isSelected = List.generate(studentsList.length, (_) => false);
         });
       }
     }).catchError((error) {
@@ -84,13 +95,10 @@ class AttendancePageState extends State<AttendancePage> {
         'Content-Type': 'application/json',
       };
 
-      final url = Uri.parse(
-          'https://attendancesdcusar.onrender.com/api/v1/getStudents');
+      final url =
+          Uri.parse('https://newsdcattendance.onrender.com/getstudents');
 
-      final body = {
-        'batchId': batchId,
-        'semster': semester,
-      };
+      final body = {'batchId': batchId};
 
       final response =
           await http.post(url, headers: headers, body: json.encode(body));
@@ -100,11 +108,14 @@ class AttendancePageState extends State<AttendancePage> {
 
         if (responseData['success']) {
           final students = responseData['result'] as List;
+          print(students);
+          print("----------------------------");
           studentsList =
               students.map((json) => AttendanceModel.fromJson(json)).toList();
           setState(() {
-            isSelected = List.generate(studentsList.length, (_) => false);
+            //isSelected = List.generate(studentsList.length, (_) => false);
           });
+          print(studentsList);
           return studentsList;
         } else {
           throw Exception(responseData['message']);
@@ -151,7 +162,7 @@ class AttendancePageState extends State<AttendancePage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                widget.responseData[1][3],
+                                "AR", //widget.responseData[1][3], // Text 1 Branch
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontFamily: "Poppins",
@@ -163,7 +174,7 @@ class AttendancePageState extends State<AttendancePage> {
                                 width: 10,
                               ),
                               Text(
-                                widget.responseData[1][4],
+                                "B2", //widget.responseData[1][4],  // Text 2 Batch
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontFamily: "Poppins",
@@ -176,7 +187,7 @@ class AttendancePageState extends State<AttendancePage> {
                         ),
                         SizedBox(height: 5),
                         Text(
-                          widget.responseData[1][5],
+                          "Engineering Chemistry Lab", //widget.responseData[1][5],  // class
                           style: TextStyle(
                             fontSize: 18,
                             fontFamily: "Poppins",
@@ -218,17 +229,25 @@ class AttendancePageState extends State<AttendancePage> {
                           markAllPresent = newValue;
 
                           if (markAllPresent) {
-                            selectedStudents = List.from(studentsList);
+                            //selectedStudents = List.from(studentsList);
+                            studentsList.forEach((element) {
+                              element.setStatus = "present";
+                            });
+                            print(studentsList);
                           } else {
-                            selectedStudents.clear();
+                            //selectedStudents.clear();
+                            studentsList.forEach((element) {
+                              element.setStatus = "absent";
+                            });
+                            print(studentsList);
                           }
 
-                          isSelected = List.generate(
-                            studentsList.length,
-                            (index) =>
-                                markAllPresent ||
-                                selectedStudents.contains(studentsList[index]),
-                          );
+                          // isSelected = List.generate(
+                          //   studentsList.length,
+                          //   (index) =>
+                          //       markAllPresent ||
+                          //       studentsList.contains(studentsList[index]),
+                          // );
                         });
                       },
                     )
@@ -241,7 +260,9 @@ class AttendancePageState extends State<AttendancePage> {
                       itemCount: studentsList.length,
                       itemBuilder: (context, index) {
                         final student = studentsList[index];
-                        final bool isChecked = isSelected[index];
+                        final bool isChecked =
+                            studentsList[index].status == "present";
+                        print(isChecked);
                         print(index);
                         return Card(
                           shape: RoundedRectangleBorder(
@@ -265,29 +286,42 @@ class AttendancePageState extends State<AttendancePage> {
                                     : Colors.red,
                               ),
                             ),
-                            subtitle: Text(student.enrollmentNo.toString()),
+                            subtitle: Text(student.enrollmentNo),
                             trailing: GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  final isChecked = isSelected[index];
+                                  final isChecked =
+                                      studentsList[index].status == "absent";
 
                                   if (isChecked) {
-                                    selectedStudents.remove(student);
+                                    // selectedStudents.remove(student);
+                                    // Present
+                                    studentsList.forEach((element) {
+                                      if (element == studentsList[index]) {
+                                        element.setStatus = "present";
+                                      }
+                                    });
                                   } else {
-                                    selectedStudents.add(student);
+                                    //selectedStudents.add(student);
+                                    //Absent
+                                    studentsList.forEach((element) {
+                                      if (element == studentsList[index]) {
+                                        element.setStatus = "absent";
+                                      }
+                                    });
                                   }
 
-                                  isSelected[index] = !isChecked;
-                                  markAllPresent =
-                                      isSelected.every((value) => value) &&
-                                          selectedStudents.isNotEmpty;
+                                  //isSelected[index] = !isChecked;
+                                  markAllPresent = studentsList.every((value) =>
+                                          value.status == "present") &&
+                                      studentsList.isNotEmpty;
                                 });
                               },
                               child: Icon(
-                                isSelected[index]
+                                studentsList[index].status == "present"
                                     ? Icons.check_circle
                                     : Icons.circle,
-                                color: isSelected[index]
+                                color: studentsList[index].status == "present"
                                     ? Colors.green.shade900
                                     : Colors.grey,
                                 size: 40,
@@ -317,7 +351,10 @@ class AttendancePageState extends State<AttendancePage> {
                     ),
                     onSubmit: () {
                       // markAttendance(selectedStudents, widget.responseData);
-                      int totalStudentsPresent = selectedStudents.length;
+                      int totalStudentsPresent = studentsList
+                          .where((element) => element.status == "present")
+                          .length;
+                      print(totalStudentsPresent);
                       int totalStudents = studentsList.length;
 
                       showDialog(
@@ -367,7 +404,7 @@ class AttendancePageState extends State<AttendancePage> {
                                 onPressed: () {
                                   comment = commentController.text;
                                   markAttendance(
-                                      selectedStudents, widget.responseData);
+                                      studentsList, widget.responseData);
                                   // Navigator.of(context).pop();
                                 },
                               ),
@@ -400,20 +437,21 @@ class AttendancePageState extends State<AttendancePage> {
       'Content-Type': 'application/json',
     };
 
-    final url = Uri.parse(
-        'https://attendancesdcusar.onrender.com/api/v1/markingattendance');
+    final url =
+        Uri.parse('https://newsdcattendance.onrender.com/markingattendance');
 
-    final List<Map<String, dynamic>> attendanceList = selectedStudents
+    final List<Map<String, dynamic>> attendanceList = studentsList
         .map((student) => {
-              'enrollment_no': student.enrollmentNo,
-              'attendancestatus': 1,
+              'id': student.id,
+              'status': student.status,
             })
         .toList();
     // print(attendanceList);
     Map<String, dynamic> Mydata = {
-      'data': attendanceList,
-      'period_id': resposeData[0]["period_id"],
-      'comment': comment
+      'student_ids': attendanceList,
+      "startedAt": 1693770079095,
+      "endedAt": 1693770075095,
+      'period_id': resposeData[1]
     };
     final jsonData = jsonEncode(Mydata);
     print(jsonData);
