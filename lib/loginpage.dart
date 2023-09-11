@@ -1,8 +1,9 @@
 import 'dart:async';
+import 'package:attendance_management_system/forget_pass.dart';
 import 'package:flutter/material.dart';
-import 'forget_pass_page.dart';
+// import 'reset_pass.dart';
 import 'login_api.dart';
-import 'semesterpage.dart';
+// import 'semesterpage.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -283,12 +284,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                ForgetPasswordPage()
+                                                ForgotPassword()
                                             // ForgetPasswordPage()),
                                             ));
                                   },
                                   child: Text(
-                                    "Reset Password",
+                                    "Forgot Password",
                                     style: TextStyle(
                                       fontSize: 16,
                                       color: Colors

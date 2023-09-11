@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'semesterpage.dart';
 import 'token_manager.dart';
 
+String? result_token;
+
 Future<void> login(
     BuildContext context, String instructorId, String password) async {
     // String? responseMessage;
@@ -31,6 +33,7 @@ Future<void> login(
 
       if (success) {
         print(token);
+        result_token = token;
         print('Text') ;
         await tokenManager.setToken(token); // save token using TokenManager
         Navigator.push(
@@ -76,4 +79,9 @@ Future<void> login(
   } catch (e) {
     print(e);
   }
+}
+
+String? token(){
+  // print("*********** $result_token");
+  return result_token;
 }

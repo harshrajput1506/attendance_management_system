@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:attendance_management_system/forget_pass_page.dart';
+import 'package:attendance_management_system/reset_pass.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
@@ -268,7 +268,7 @@ class SemesterPageState extends State<SemesterPage> {
                           Container(
                             child: Center(
                               child: Text(
-                                name ?? '', // Display the name variable
+                                name, // Display the name variable
                                 style: TextStyle(
                                   fontFamily: "Poppins",
                                   fontSize: 20,
@@ -506,7 +506,7 @@ class SemesterPageState extends State<SemesterPage> {
                                                   (String value) {
                                                 return DropdownMenuItem<String>(
                                                   value: value,
-                                                  child: Text(value),
+                                                  child: Text(value, style: TextStyle(color: Colors.white),),
                                                 );
                                               }).toList(),
                                               hint: selectedSubjectType == null
@@ -670,7 +670,7 @@ class SemesterPageState extends State<SemesterPage> {
                                                   return DropdownMenuItem<
                                                       String>(
                                                     value: value,
-                                                    child: Text(value),
+                                                    child: Text(value, style: TextStyle(color: Colors.white),),
                                                   );
                                                 }).toList(),
                                                 hint: selectedBatchGroup == null
