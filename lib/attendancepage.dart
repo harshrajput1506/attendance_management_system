@@ -63,7 +63,8 @@ class AttendancePageState extends State<AttendancePage> {
     super.initState();
     _isMounted = true;
 
-    getStudentsDataApi(widget.responseData[0], widget.responseData[1])
+    getStudentsDataApi(widget.responseData[0]["batchId"],
+            widget.responseData[0]["periodId"])
         .then((students) {
       if (_isMounted) {
         setState(() {
@@ -162,7 +163,8 @@ class AttendancePageState extends State<AttendancePage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                "AR", //widget.responseData[1][3], // Text 1 Branch
+                                widget.responseData[1]
+                                    ["stream"], // Text 1 Branch
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontFamily: "Poppins",
@@ -174,7 +176,7 @@ class AttendancePageState extends State<AttendancePage> {
                                 width: 10,
                               ),
                               Text(
-                                "B2", //widget.responseData[1][4],  // Text 2 Batch
+                                widget.responseData[1]["batch"], // Text 2 Batch
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontFamily: "Poppins",
@@ -187,7 +189,12 @@ class AttendancePageState extends State<AttendancePage> {
                         ),
                         SizedBox(height: 5),
                         Text(
-                          "Engineering Chemistry Lab", //widget.responseData[1][5],  // class
+                          widget.responseData[1]["subject_name"] +
+                              " " +
+                              widget.responseData[1]["subject_type"] +
+                              " (" +
+                              widget.responseData[1]["subject_code"] +
+                              ")", // class
                           style: TextStyle(
                             fontSize: 18,
                             fontFamily: "Poppins",
@@ -449,9 +456,9 @@ class AttendancePageState extends State<AttendancePage> {
     // print(attendanceList);
     Map<String, dynamic> Mydata = {
       'student_ids': attendanceList,
-      "startedAt": 1693770079095,
-      "endedAt": 1693770075095,
-      'period_id': resposeData[1]
+      "startedAt": resposeData[2]["startTime"],
+      "endedAt": resposeData[2]["endTime"],
+      'period_id': resposeData[0]["periodId"]
     };
     final jsonData = jsonEncode(Mydata);
     print(jsonData);

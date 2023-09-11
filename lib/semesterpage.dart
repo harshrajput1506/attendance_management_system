@@ -33,6 +33,8 @@ class SemesterPageState extends State<SemesterPage> {
   String? _selectedBatch;
   String? selectedSubjectType;
   String? selectedBatchGroup;
+  int? _startTimestamp;
+  int? _endTimeStamp;
   // String? timestamp = getCurrentDateTimeFormatted();
 
   List<String> subjectTypes = ['lab', 'theory'];
@@ -708,7 +710,85 @@ class SemesterPageState extends State<SemesterPage> {
                                               await showTimeRangePicker(
                                             context: context,
                                           );
-                                          print("result " + result.toString());
+                                          DateTime now = new DateTime.now();
+                                          String month = "00";
+                                          String day = "00";
+                                          String startHours = "00";
+                                          String startMinutes = "00";
+                                          String endMinutes = "00";
+                                          String endHours = "00";
+                                          if (now.month.toString().length ==
+                                              1) {
+                                            month = "0${now.month}";
+                                          } else {
+                                            month = now.month.toString();
+                                          }
+                                          if (now.day.toString().length == 1) {
+                                            day = "0${now.day}";
+                                          } else {
+                                            day = now.day.toString();
+                                          }
+
+                                          if (result.startTime.hour
+                                                  .toString()
+                                                  .length ==
+                                              1) {
+                                            startHours =
+                                                "0${result.startTime.hour}";
+                                          } else {
+                                            startHours = result.startTime.hour
+                                                .toString();
+                                          }
+                                          if (result.startTime.minute
+                                                  .toString()
+                                                  .length ==
+                                              1) {
+                                            startMinutes =
+                                                "0${result.startTime.minute}";
+                                          } else {
+                                            startMinutes = result
+                                                .startTime.minute
+                                                .toString();
+                                          }
+                                          if (result.endTime.minute
+                                                  .toString()
+                                                  .length ==
+                                              1) {
+                                            endMinutes =
+                                                "0${result.endTime.minute}";
+                                          } else {
+                                            endMinutes = result.endTime.minute
+                                                .toString();
+                                          }
+                                          if (result.endTime.hour
+                                                  .toString()
+                                                  .length ==
+                                              1) {
+                                            endHours =
+                                                "0${result.endTime.hour}";
+                                          } else {
+                                            endHours =
+                                                result.endTime.hour.toString();
+                                          }
+                                          String startDateTimeString =
+                                              "${now.year}-${month}-${day} ${startHours}:${startMinutes}:00";
+                                          String endDateTimeString =
+                                              "${now.year}-${month}-${day} ${endHours}:${endMinutes}:00";
+                                          DateTime startDateTime =
+                                              DateTime.parse(
+                                                  startDateTimeString);
+                                          DateTime endDateTime =
+                                              DateTime.parse(endDateTimeString);
+
+                                          _endTimeStamp = endDateTime
+                                              .millisecondsSinceEpoch;
+                                          _startTimestamp = startDateTime
+                                              .millisecondsSinceEpoch;
+
+                                          print("result " +
+                                              startDateTime.toString() +
+                                              " " +
+                                              endDateTime.toString());
                                         },
                                         child: Text("Select Time"),
                                       ),
@@ -783,10 +863,20 @@ class SemesterPageState extends State<SemesterPage> {
                                                   print("Period ID: $periodId");
 
                                                   // Now, you have batchId and periodId. Send them to the backend as needed.
+                                                  final idData = {
+                                                    "batchId": batchId,
+                                                    "periodId": periodId
+                                                  };
+                                                  final timeData = {
+                                                    "startTime":
+                                                        _startTimestamp,
+                                                    "endTime": _endTimeStamp
+                                                  };
                                                   final List<dynamic>
                                                       responseData = <dynamic>[
-                                                    batchId,
-                                                    periodId
+                                                    idData,
+                                                    selectedBatchData,
+                                                    timeData
                                                   ];
                                                   print("List $responseData");
                                                   _navigateToAttendancePage(
