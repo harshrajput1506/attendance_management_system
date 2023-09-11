@@ -251,11 +251,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                             ),
                                           )
                                         : Text(
-                                            "Login",
+                                            "Log In",
                                             style: TextStyle(
                                               fontSize: 22,
                                               fontFamily: "Poppins",
                                               fontWeight: FontWeight.w600,
+                                              color: Colors.white,
                                             ),
                                           ),
                                     onPressed: () async {

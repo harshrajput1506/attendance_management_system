@@ -25,8 +25,8 @@ Future<String> sendOTP(String enrollment_no, String instructorId) async {
   }
 }
 
-Future<String> verifyOTPAndChangePassword( String otp,
-    String instructorId, String newPassword) async {
+Future<String> verifyOTPAndChangePassword(
+    String otp, String instructorId, String newPassword) async {
   final url = 'https://newsdcattendance.onrender.com/verifyOtp';
   final response = await http.post(Uri.parse(url), body: {
     'instructor_id': instructorId,
@@ -59,102 +59,199 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Forgot Password'),
+        title: Text(''),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 10),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              child: Center(
+                child: Text(
+                    'Generated OTP will be sent to your registered Email address.',
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 233, 114, 105),
+                      
+                ),textAlign: TextAlign.left,),
+              ),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: const Color.fromARGB(105, 158, 158, 158),
+                ),
+                borderRadius: BorderRadius.circular(6),
+              ),
+            ),
             SizedBox(height: 20),
-            Text(
-              'Enter your instructor ID to receive OTP',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Row(
+              children: [
+                const SizedBox(
+                  width: 4,
+                ),
+                Text(
+                  'ENTER YOUR INSTRUCTOR ID',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 0.05,),
+                ),
+              ],
             ),
             SizedBox(height: 10),
-            TextFormField(
-              controller: _instructorIdController,
-              decoration: InputDecoration(labelText: 'Instructor ID'),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(327, 69),
-                backgroundColor: Color.fromRGBO(0, 70, 121, 1),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50),
+            Container(
+              height: 44,
+              child: TextFormField(
+                controller: _instructorIdController,
+                decoration: InputDecoration(
+                  labelText: 'Instructor ID ',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
                 ),
               ),
-              onPressed: () async {
-                try {
-                  final response = await sendOTP("NA",
-                      _instructorIdController.text);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(response)),
-                  );
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Failed to send OTP')),
-                  );
-                }
-              },
-              child: Text('Send OTP'),
-            ),
-            SizedBox(height: 40),
-            Text(
-              'Enter OTP and new password',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            TextFormField(
-              controller: _otpController,
-              decoration: InputDecoration(labelText: 'OTP'),
-            ),
-            TextFormField(
-              controller: _newPasswordController,
-              obscureText: true,
-              decoration: InputDecoration(labelText: 'New Password'),
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(327, 69),
-                backgroundColor: Color.fromRGBO(0, 70, 121, 1),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50),
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: Size(160, 50),
+                  backgroundColor: Color.fromRGBO(0, 70, 121, 1),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  foregroundColor: Colors.white,
                 ),
-              ),
-              onPressed: () async {
-                if (!_isLoading) {
-                  setState(() {
-                    _isLoading = true;
-                  });
+                onPressed: () async {
                   try {
-                    final response = await verifyOTPAndChangePassword(
-                      // _enrollment_noController.text,
-                      _otpController.text,
-                      _instructorIdController.text,
-                      _newPasswordController.text,
-                    );
+                    final response =
+                        await sendOTP("NA", _instructorIdController.text);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(response)),
                     );
                   } catch (e) {
-                    print(e);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content:
-                            Text('Failed to verify OTP and change password'),
-                      ),
+                      SnackBar(content: Text('Failed to send OTP')),
                     );
                   }
-                  setState(() {
-                    _isLoading = false;
-                  });
-                }
-              },
-              child: Text('Verify OTP & Update Password'),
+                },
+                child: Text('Send OTP'),
+              ),
             ),
+            SizedBox(height: 40),
+            Text(
+              'ENTER OTP AND NEW PASSWORD',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 0.05,),
+            ),
+            SizedBox(height: 10),
+            Container(
+              height: 44,
+              child: TextFormField(
+                controller: _otpController,
+                decoration: InputDecoration(
+                  labelText: 'OTP',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 12,
+            ),
+            Container(
+              height: 44,
+              child: TextFormField(
+                controller: _newPasswordController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'New Password',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 20),
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: Size(160, 50),
+                  backgroundColor: Color.fromRGBO(0, 70, 121, 1),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: () async {
+                  if (!_isLoading) {
+                    setState(() {
+                      _isLoading = true;
+                    });
+                    try {
+                      final response = await verifyOTPAndChangePassword(
+                        // _enrollment_noController.text,
+                        _otpController.text,
+                        _instructorIdController.text,
+                        _newPasswordController.text,
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(response)),
+                      );
+                    } catch (e) {
+                      print(e);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content:
+                              Text('Failed to verify OTP and change password'),
+                        ),
+                      );
+                    }
+                    setState(() {
+                      _isLoading = false;
+                    });
+                  }
+                },
+                child: Text('Verify OTP & Update Password '),
+              ),
+            ),
+            // ElevatedButton(
+            //   style: ElevatedButton.styleFrom(
+            //     minimumSize: Size(327, 69),
+            //     backgroundColor: Color.fromRGBO(0, 70, 121, 1),
+            //     shape: RoundedRectangleBorder(
+            //       borderRadius: BorderRadius.circular(50),
+            //     ),
+            //   ),
+            //   onPressed: () async {
+            //     if (!_isLoading) {
+            //       setState(() {
+            //         _isLoading = true;
+            //       });
+            //       try {
+            //         final response = await verifyOTPAndChangePassword(
+            //           // _enrollment_noController.text,
+            //           _otpController.text,
+            //           _instructorIdController.text,
+            //           _newPasswordController.text,
+            //         );
+            //         ScaffoldMessenger.of(context).showSnackBar(
+            //           SnackBar(content: Text(response)),
+            //         );
+            //       } catch (e) {
+            //         print(e);
+            //         ScaffoldMessenger.of(context).showSnackBar(
+            //           SnackBar(
+            //             content:
+            //                 Text('Failed to verify OTP and change password'),
+            //           ),
+            //         );
+            //       }
+            //       setState(() {
+            //         _isLoading = false;
+            //       });
+            //     }
+            //   },
+            //   child: Text('Verify OTP & Update Password'),
+            // ),
           ],
         ),
       ),

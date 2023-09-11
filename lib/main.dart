@@ -12,6 +12,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: GetStartedPage(),
        theme: ThemeData(
+        useMaterial3: true,
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.white, // Change app bar background color to white
           iconTheme: IconThemeData(color: Color.fromRGBO(4, 29, 83, 1),) // Change app bar icon color to blue

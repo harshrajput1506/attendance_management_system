@@ -492,6 +492,8 @@ class SemesterPageState extends State<SemesterPage> {
                                         : Container(
                                             child: DropdownButton<String>(
                                               value: selectedSubjectType,
+                                              isExpanded: true,
+                                              underline: SizedBox(),
                                               onChanged: (newValue) {
                                                 setState(() {
                                                   selectedSubjectType =
@@ -506,7 +508,13 @@ class SemesterPageState extends State<SemesterPage> {
                                                   (String value) {
                                                 return DropdownMenuItem<String>(
                                                   value: value,
-                                                  child: Text(value, style: TextStyle(color: Colors.white),),
+                                                  child: Center(
+                                                    child: Text(
+                                                      value,
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                    ),
+                                                  ),
                                                 );
                                               }).toList(),
                                               hint: selectedSubjectType == null
@@ -627,7 +635,7 @@ class SemesterPageState extends State<SemesterPage> {
                                               hint: _selectedBatch == null
                                                   ? Center(
                                                       child: Text(
-                                                        'Select Batch',
+                                                        'Select Batch Group',
                                                         style: TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 18,
@@ -641,55 +649,55 @@ class SemesterPageState extends State<SemesterPage> {
                                           ),
                                   ),
                                 ),
-                                if (selectedSubjectType != "theory")
-                                  Padding(
-                                    padding: const EdgeInsets.all(2.0),
-                                    child: Container(
-                                      margin: EdgeInsets.all(10.0),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        color: Color.fromRGBO(4, 29, 83, 1),
-                                      ),
-                                      width: 320,
-                                      alignment: Alignment.center,
-                                      child: _selectedSchool == null
-                                          ? null
-                                          : Container(
-                                              child: DropdownButton<String>(
-                                                value: selectedBatchGroup,
-                                                onChanged: (newValue) {
-                                                  setState(() {
-                                                    selectedBatchGroup =
-                                                        newValue!;
-                                                  });
-                                                },
-                                                items: batchGroups.map<
-                                                        DropdownMenuItem<
-                                                            String>>(
-                                                    (String value) {
-                                                  return DropdownMenuItem<
-                                                      String>(
-                                                    value: value,
-                                                    child: Text(value, style: TextStyle(color: Colors.white),),
-                                                  );
-                                                }).toList(),
-                                                hint: selectedBatchGroup == null
-                                                    ? Center(
-                                                        child: Text(
-                                                          'Select Batch Group',
-                                                          style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: 18,
-                                                          ),
-                                                        ),
-                                                      )
-                                                    : null,
-                                                dropdownColor: Color.fromRGBO(
-                                                    0, 70, 121, 1),
-                                              ),
-                                            ),
-                                    ),
-                                  ),
+                                // if (selectedSubjectType != "theory")
+                                //   Padding(
+                                //     padding: const EdgeInsets.all(2.0),
+                                //     child: Container(
+                                //       margin: EdgeInsets.all(10.0),
+                                //       decoration: BoxDecoration(
+                                //         borderRadius: BorderRadius.circular(10),
+                                //         color: Color.fromRGBO(4, 29, 83, 1),
+                                //       ),
+                                //       width: 320,
+                                //       alignment: Alignment.center,
+                                //       child: _selectedSchool == null
+                                //           ? null
+                                //           : Container(
+                                //               child: DropdownButton<String>(
+                                //                 value: selectedBatchGroup,
+                                //                 onChanged: (newValue) {
+                                //                   setState(() {
+                                //                     selectedBatchGroup =
+                                //                         newValue!;
+                                //                   });
+                                //                 },
+                                //                 items: batchGroups.map<
+                                //                         DropdownMenuItem<
+                                //                             String>>(
+                                //                     (String value) {
+                                //                   return DropdownMenuItem<
+                                //                       String>(
+                                //                     value: value,
+                                //                     child: Text(value, style: TextStyle(color: Colors.white),),
+                                //                   );
+                                //                 }).toList(),
+                                //                 hint: selectedBatchGroup == null
+                                //                     ? Center(
+                                //                         child: Text(
+                                //                           'Select Batch Group',
+                                //                           style: TextStyle(
+                                //                             color: Colors.white,
+                                //                             fontSize: 18,
+                                //                           ),
+                                //                         ),
+                                //                       )
+                                //                     : null,
+                                //                 dropdownColor: Color.fromRGBO(
+                                //                     0, 70, 121, 1),
+                                //               ),
+                                //             ),
+                                //     ),
+                                //   ),
                                 Padding(
                                   padding: const EdgeInsets.all(28.0),
                                   child: Row(
@@ -790,7 +798,12 @@ class SemesterPageState extends State<SemesterPage> {
                                               " " +
                                               endDateTime.toString());
                                         },
-                                        child: Text("Select Time"),
+                                        child: Text(
+                                          "Select Time",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -834,6 +847,7 @@ class SemesterPageState extends State<SemesterPage> {
                                                 fontSize: 22,
                                                 fontFamily: "Poppins",
                                                 fontWeight: FontWeight.w600,
+                                                color: Colors.white,
                                               ),
                                             ),
                                       onPressed: isContinueButtonEnabled

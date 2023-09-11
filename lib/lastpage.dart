@@ -22,24 +22,26 @@ class SubmitPageState extends State<SubmitPage> {
                 alignment: Alignment.topRight,
                 color: Color.fromRGBO(255, 255, 255, 1),
                 child: ElevatedButton.icon(
-                    onPressed: () async {
-                      
-                      Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                              builder: (context) => SemesterPage()),
-                          (route) => false);
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStatePropertyAll<Color>(
-                          Color.fromRGBO(4, 29, 83, 1)),
-                    ),
-                    icon: Icon(
-                      Icons.logout_sharp,
+                  onPressed: () async {
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => SemesterPage()),
+                        (route) => false);
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll<Color>(
+                        Color.fromRGBO(4, 29, 83, 1)),
+                  ),
+                  icon: Icon(
+                    Icons.logout_sharp,
+                    color: Colors.white,
+                  ),
+                  label: Text(
+                    'Back',
+                    style: TextStyle(
                       color: Colors.white,
                     ),
-                    label: Text(
-                      'Back',
-                    )),
+                  ),
+                ),
               ))
             ],
           )),
@@ -57,6 +59,7 @@ class SubmitPageState extends State<SubmitPage> {
                           backgroundColor: Color.fromRGBO(0, 70, 121, 1),
                           child: Icon(
                             Icons.done_rounded,
+                            color: Colors.white,
                             size: 20,
                           )),
                     ),
@@ -82,7 +85,10 @@ class SubmitPageState extends State<SubmitPage> {
         height: 100,
         color: Color.fromRGBO(0, 70, 121, 1),
         child: Center(
-          child: Text('For any queries, mail us at sdc.usar@gmail.com',style: TextStyle(color: Colors.white),),
+          child: Text(
+            'For any queries, mail us at sdc.usar@gmail.com',
+            style: TextStyle(color: Colors.white),
+          ),
         ),
       ),
     );
