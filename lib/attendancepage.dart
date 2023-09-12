@@ -196,7 +196,7 @@ class AttendancePageState extends State<AttendancePage> {
                               widget.responseData[1]["subject_code"] +
                               ")", // class
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 15,
                             fontFamily: "Poppins",
                             fontWeight: FontWeight.w600,
                           ),
