@@ -21,8 +21,10 @@ class SemesterPageState extends State<SemesterPage> {
 
   late List<String> subjects = [];
   late List<String> batchs = [];
+  late List<dynamic> batchesList = [];
   late List<dynamic> classDetails = [];
   late List<Map<String, dynamic>> batchData = [];
+  late String selectedTime = "Select Time";
 
   String? _selectedSchool;
   String? _selectedStream;
@@ -37,7 +39,6 @@ class SemesterPageState extends State<SemesterPage> {
   int? _endTimeStamp;
   // String? timestamp = getCurrentDateTimeFormatted();
 
-  List<String> subjectTypes = ['lab', 'theory'];
   List<String> batchGroups = ['A & B', 'A', 'B'];
 
   List<String> batchOptions = [];
@@ -104,12 +105,12 @@ class SemesterPageState extends State<SemesterPage> {
               jsonData['data'] != null && jsonData['data']['school'] != null
                   ? jsonData['data']['school'].toString()
                   : null;
-          List<dynamic> batchesData =
-              jsonData['data'] != null && jsonData['data']['batchData'] != null
-                  ? batchesInfo
-                  : [];
+          batchesList = jsonData['data'] != null && jsonData['data']['batchData'] != null
+              ? batchesInfo
+              : [];
+          //refreshData("school", "", "");
+          updateStateWithBatches(batchesList);
 
-          updateStateWithBatches(batchesData);
         });
       } else {
         throw Exception('Failed to fetch data: ${response.statusCode}');
@@ -135,6 +136,44 @@ class SemesterPageState extends State<SemesterPage> {
       );
     }
   }
+
+
+/*  void refreshData(String selection, String key ,String value) {
+    Set<String> unique = Set<String>();
+    if(selection == "school"){
+      unique.add(_selectedSchool!);
+    }
+    for(var batch in batchesList!) {
+      if(batch[selection] != null){
+        if(selection == "semester") {
+          unique.add(batch[selection]);
+        }
+        else {
+          if(key != "" && value != ""){
+            if(batch[key] == value) {
+              unique.add(batch[selection]);
+            }
+          }
+
+        }
+
+      }
+    }
+    if(selection == "school"){
+      schools = unique.toList();
+    }
+    if(selection == "semester"){
+      semesters = unique.toList();
+    }
+    else if(selection == "stream"){
+      streams = unique.toList();
+    }else if(selection == "subject"){
+      subjects = unique.toList();
+    }if(selection == "batch"){
+      batchs = unique.toList();
+    }
+
+  }*/
 
   void updateStateWithBatches(List<dynamic> batchesData) {
     Set<String> uniqueSchools = Set<String>();
@@ -339,8 +378,18 @@ class SemesterPageState extends State<SemesterPage> {
                                                 _selectedBatch = null;
                                                 _selectedSubject =
                                                     null; // Reset selected subject
+                                                //refreshData("semester", "school", _selectedSchool!);
                                               });
                                             },
+                                            disabledHint: Center(
+                                              child: Text(
+                                                "Select School",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 18,
+                                                ),
+                                              ),
+                                            ),
                                             hint: _selectedSchool == null
                                                 ? Center(
                                                     child: Text(
@@ -377,7 +426,7 @@ class SemesterPageState extends State<SemesterPage> {
                                               iconEnabledColor: Colors.white,
                                               value: _selectedSemester,
                                               underline: SizedBox(),
-                                              items: semesters.map((semester) {
+                                              items: semesters != null ? semesters!.map((semester) {
                                                 return DropdownMenuItem<String>(
                                                   value: semester,
                                                   child: Center(
@@ -390,16 +439,26 @@ class SemesterPageState extends State<SemesterPage> {
                                                     ),
                                                   ),
                                                 );
-                                              }).toList(),
+                                              }).toList() : null,
                                               onChanged: (newValue) {
                                                 setState(() {
                                                   _selectedSemester = newValue;
+                                                  //refreshData("stream", "semester", newValue!);
                                                   _selectedBatch = null;
                                                   _selectedSubject = null;
                                                   selectedBatchGroup = null;
                                                   selectedSubjectType = null;
                                                 });
                                               },
+                                              disabledHint: Center(
+                                                child: Text(
+                                                  'Select Semester',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+                                              ),
                                               hint: _selectedSemester == null
                                                   ? Center(
                                                       child: Text(
@@ -437,7 +496,7 @@ class SemesterPageState extends State<SemesterPage> {
                                               iconEnabledColor: Colors.white,
                                               underline: SizedBox(),
                                               value: _selectedStream,
-                                              items: streams.map((stream) {
+                                              items: streams != null ? streams!.map((stream) {
                                                 return DropdownMenuItem<String>(
                                                   value: stream,
                                                   child: Center(
@@ -450,16 +509,26 @@ class SemesterPageState extends State<SemesterPage> {
                                                     ),
                                                   ),
                                                 );
-                                              }).toList(),
+                                              }).toList() : null,
                                               onChanged: (newValue) {
                                                 setState(() {
                                                   _selectedStream = newValue;
+                                                  //refreshData("subject", "stream", _selectedStream!);
                                                   _selectedBatch = null;
                                                   selectedBatchGroup = null;
                                                   selectedSubjectType = null;
                                                   _selectedSubject = null;
                                                 });
                                               },
+                                              disabledHint: Center(
+                                                child: Text(
+                                                  'Select Branch',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+                                              ),
                                               hint: _selectedStream == null
                                                   ? Center(
                                                       child: Text(
@@ -491,90 +560,45 @@ class SemesterPageState extends State<SemesterPage> {
                                         ? null
                                         : Container(
                                             child: DropdownButton<String>(
-                                              value: selectedSubjectType,
-                                              isExpanded: true,
-                                              underline: SizedBox(),
-                                              onChanged: (newValue) {
-                                                setState(() {
-                                                  selectedSubjectType =
-                                                      newValue!;
-                                                  _selectedSubject = null;
-                                                  selectedBatchGroup = null;
-                                                  fetchBatchOptions();
-                                                });
-                                              },
-                                              items: subjectTypes.map<
-                                                      DropdownMenuItem<String>>(
-                                                  (String value) {
-                                                return DropdownMenuItem<String>(
-                                                  value: value,
-                                                  child: Center(
-                                                    child: Text(
-                                                      value,
-                                                      style: TextStyle(
-                                                          color: Colors.white),
-                                                    ),
-                                                  ),
-                                                );
-                                              }).toList(),
-                                              hint: selectedSubjectType == null
-                                                  ? Center(
-                                                      child: Text(
-                                                        'Select Subject Type',
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 18,
-                                                        ),
-                                                      ),
-                                                    )
-                                                  : null,
-                                              dropdownColor:
-                                                  Color.fromRGBO(0, 70, 121, 1),
-                                            ),
-                                          ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: Container(
-                                    margin: EdgeInsets.all(10.0),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Color.fromRGBO(4, 29, 83, 1),
-                                    ),
-                                    width: 320,
-                                    alignment: Alignment.center,
-                                    child: _selectedSchool == null
-                                        ? null
-                                        : Container(
-                                            child: DropdownButton<String>(
                                               borderRadius:
                                                   BorderRadius.circular(5),
                                               isExpanded: true,
                                               iconEnabledColor: Colors.white,
                                               value: _selectedSubject,
                                               underline: SizedBox(),
-                                              items: subjects.map((subject) {
+                                              items: subjects!=null ? subjects!.map((subject) {
                                                 return DropdownMenuItem<String>(
                                                   value: subject,
                                                   child: Center(
-                                                    child: Text(
-                                                      subject,
-                                                      style: TextStyle(
-                                                        fontSize: 18,
-                                                        color: Colors.white,
-                                                      ),
-                                                    ),
+                                                      child: Text(
+                                                        subject,
+                                                        textAlign: TextAlign.center,
+                                                        style: TextStyle(
+                                                          fontSize: 18,
+                                                          color: Colors.white,
+                                                        ),
+                                                      )
                                                   ),
                                                 );
-                                              }).toList(),
+                                              }).toList() : null,
                                               onChanged: (newValue) {
                                                 setState(() {
                                                   _selectedSubject = newValue;
+                                                  //refreshData("batch", "subject", _selectedBatch!);
                                                   _selectedBatch = null;
                                                   selectedBatchGroup = null;
                                                 });
                                               },
+                                              disabledHint: Center(
+                                                child: Text(
+                                                  'Select Subject',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 18,
+
+                                                  ),
+                                                ),
+                                              ),
                                               hint: _selectedSubject == null
                                                   ? Center(
                                                       child: Text(
@@ -582,6 +606,7 @@ class SemesterPageState extends State<SemesterPage> {
                                                         style: TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 18,
+
                                                         ),
                                                       ),
                                                     )
@@ -612,7 +637,7 @@ class SemesterPageState extends State<SemesterPage> {
                                               iconEnabledColor: Colors.white,
                                               underline: SizedBox(),
                                               value: _selectedBatch,
-                                              items: batchs.map((batch) {
+                                              items: batchs != null ? batchs!.map((batch) {
                                                 return DropdownMenuItem<String>(
                                                   value: batch,
                                                   child: Center(
@@ -625,13 +650,22 @@ class SemesterPageState extends State<SemesterPage> {
                                                     ),
                                                   ),
                                                 );
-                                              }).toList(),
+                                              }).toList() : null,
                                               onChanged: (newValue) {
                                                 setState(() {
                                                   _selectedBatch = newValue;
                                                   selectedBatchGroup = null;
                                                 });
                                               },
+                                              disabledHint: Center(
+                                                child: Text(
+                                                  'Select Batch Group',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+                                              ),
                                               hint: _selectedBatch == null
                                                   ? Center(
                                                       child: Text(
@@ -797,9 +831,13 @@ class SemesterPageState extends State<SemesterPage> {
                                               startDateTime.toString() +
                                               " " +
                                               endDateTime.toString());
+
+                                          setState(() {
+                                            selectedTime = "$startHours:$startMinutes - $endHours:$endMinutes";
+                                          });
                                         },
                                         child: Text(
-                                          "Select Time",
+                                          selectedTime,
                                           style: TextStyle(
                                             color: Colors.white,
                                           ),
@@ -931,6 +969,7 @@ class SemesterPageState extends State<SemesterPage> {
       },
     );
   }
+
 
   /*Future<dynamic> getBatchDetails() async {
     final url =
