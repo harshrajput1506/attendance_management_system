@@ -22,6 +22,8 @@ class SemesterPageState extends State<SemesterPage> {
   late List<String> subjects = [];
   late List<String> batchs = [];
   late List<dynamic> batchesList = [];
+  late Map<String, String> selectedMap = {};
+  late List<dynamic> mainBatchList = [];
   late List<dynamic> classDetails = [];
   late List<Map<String, dynamic>> batchData = [];
   late String selectedTime = "Select Time";
@@ -105,10 +107,12 @@ class SemesterPageState extends State<SemesterPage> {
               jsonData['data'] != null && jsonData['data']['school'] != null
                   ? jsonData['data']['school'].toString()
                   : null;
+          selectedMap["school"] = _selectedSchool!;
           batchesList = jsonData['data'] != null && jsonData['data']['batchData'] != null
               ? batchesInfo
               : [];
           //refreshData("school", "", "");
+          mainBatchList = batchesList;
           updateStateWithBatches(batchesList);
 
         });
@@ -136,6 +140,7 @@ class SemesterPageState extends State<SemesterPage> {
       );
     }
   }
+
 
 
 /*  void refreshData(String selection, String key ,String value) {
@@ -174,6 +179,11 @@ class SemesterPageState extends State<SemesterPage> {
     }
 
   }*/
+
+  void filterBatchList(String key, String value){
+    batchesList.removeWhere((element) => element[key] != value);
+    updateStateWithBatches(batchesList);
+  }
 
   void updateStateWithBatches(List<dynamic> batchesData) {
     Set<String> uniqueSchools = Set<String>();
@@ -376,9 +386,10 @@ class SemesterPageState extends State<SemesterPage> {
                                                 _selectedSemester =
                                                     null; // Reset selected semester
                                                 _selectedBatch = null;
-                                                _selectedSubject =
-                                                    null; // Reset selected subject
+                                                _selectedSubject = null; // Reset selected subject
                                                 //refreshData("semester", "school", _selectedSchool!);
+                                                print(batchesList);
+                                                updateStateWithBatches(batchesList);
                                               });
                                             },
                                             disabledHint: Center(
@@ -448,6 +459,12 @@ class SemesterPageState extends State<SemesterPage> {
                                                   _selectedSubject = null;
                                                   selectedBatchGroup = null;
                                                   selectedSubjectType = null;
+                                                  selectedMap["semester"] = newValue!;
+                                                  List<dynamic> list = batchesList;
+                                                  list = list.where((element) => element["semester"] == newValue).toList();
+                                                  print(list);
+                                                  updateStateWithBatches(list);
+
                                                 });
                                               },
                                               disabledHint: Center(
@@ -518,6 +535,12 @@ class SemesterPageState extends State<SemesterPage> {
                                                   selectedBatchGroup = null;
                                                   selectedSubjectType = null;
                                                   _selectedSubject = null;
+                                                  selectedMap["stream"] = newValue!;
+                                                  List<dynamic> list = batchesList;
+                                                  list = list.where((element) => element["stream"] == newValue && element["semester"] == selectedMap["semester"])
+                                                      .toList();
+                                                  print(list);
+                                                  updateStateWithBatches(list);
                                                 });
                                               },
                                               disabledHint: Center(
@@ -587,6 +610,12 @@ class SemesterPageState extends State<SemesterPage> {
                                                   //refreshData("batch", "subject", _selectedBatch!);
                                                   _selectedBatch = null;
                                                   selectedBatchGroup = null;
+                                                  selectedMap["subject_name"] = newValue!;
+                                                  List<dynamic> list = batchesList;
+                                                  list = list.where((element) => element["subject_name"] == newValue && element["semester"] == selectedMap["semester"] && element["stream"] == selectedMap["stream"]).toList();
+                                                  print(selectedMap);
+                                                  print(list);
+                                                  updateStateWithBatches(list);
                                                 });
                                               },
                                               disabledHint: Center(
@@ -655,6 +684,11 @@ class SemesterPageState extends State<SemesterPage> {
                                                 setState(() {
                                                   _selectedBatch = newValue;
                                                   selectedBatchGroup = null;
+                                                  selectedMap["batch"] = newValue!;
+                                                  List<dynamic> list = batchesList;
+                                                  list = list.where((element) => element["batch"] == newValue && element["semester"] == selectedMap["semester"] && element["stream"] == selectedMap["stream"] && element["subject_name"] == selectedMap["subject"]).toList();
+                                                  print(selectedMap);
+                                                  print(list);
                                                 });
                                               },
                                               disabledHint: Center(
